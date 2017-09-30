@@ -22,9 +22,12 @@ Promise.resolve()                                               //start the prom
             headers: {
                 'User-Agent': userAgent
             },
-            json: false                                  //Automatically parses the JSON string in the response
+            //json: false                                  //Automatically parses the JSON string in the response
         };
-        return rp(options);
+        return rp(options)
+        .then((response) => {
+            return response;
+        })
     })
     .then(() => {
         //unzip the JSON and write to file
