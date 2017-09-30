@@ -3,7 +3,6 @@ const request = require('request');                             //for NVD API ca
 const rp = require('request-promise');                          //wrap request with promises for easir flow control
 const fs = require('fs');                                       //for reading the JSON file
 
-
 //simple script to get recent NVD JSON data from their CDN in a zip format
 //unzip it and do some stuff using past project's code
 
@@ -16,5 +15,11 @@ Promise.resolve()                                               //start the prom
     console.log(`\nNVD Recent Vulnerability Script Started on ${new Date().toISOString()}`);
 })
 .then(() => {
-    //Get the RECENT json
+    //Get the RECENT json that is in .zip format
+})
+.then(() => {
+    //unzip the JSON and write to file
+})
+.then(() => {
+    //for now just to get things working, list data about ALL recents
 })
