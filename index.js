@@ -12,19 +12,27 @@ const userAgent = `Node ${process.version}`;                //the user agent we 
 
 //script starts here
 Promise.resolve()                                               //start the promise chain as resolved to avoid issues
-.then(() => {
-    console.log(`\nNVD Recent Vulnerability Script Started on ${new Date().toISOString()}`);
-})
-.then(() => {
-    //Get the RECENT json that is in .zip format
-})
-.then(() => {
-    //unzip the JSON and write to file
-})
-.then(() => {
-    //for now just to get things working, list data about ALL recents
-})
+    .then(() => {
+        console.log(`\nNVD Recent Vulnerability Script Started on ${new Date().toISOString()}`);
+    })
+    .then(() => {
+        //Get the RECENT json that is in .zip format
+        var options = {
+            uri: `https://static.nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-recent.json.zip`,
+            headers: {
+                'User-Agent': userAgent
+            },
+            json: true                                  //Automatically parses the JSON string in the response
+        };
+        return rp(options);
+    })
+    .then(() => {
+        //unzip the JSON and write to file
+    })
+    .then(() => {
+        //for now just to get things working, list data about ALL recents
+    })
 
-.then(() => {
-    console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
-})
+    .then(() => {
+        console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
+    })
