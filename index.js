@@ -2,6 +2,7 @@
 const request = require('request');                             //for NVD API calls
 const rp = require('request-promise');                          //wrap request with promises for easir flow control
 const fs = require('fs');                                       //for reading the JSON file
+const userAgent = `Node ${process.version}`;                //the user agent we set to talk to github
 
 //simple script to get recent NVD JSON data from their CDN in a zip format
 //unzip it and do some stuff using past project's code
@@ -22,4 +23,8 @@ Promise.resolve()                                               //start the prom
 })
 .then(() => {
     //for now just to get things working, list data about ALL recents
+})
+
+.then(() => {
+    console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
 })
