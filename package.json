@@ -1,0 +1,24 @@
+{
+  "name": "nvdnotifier",
+  "version": "1.0.0",
+  "description": "SMall NVD recent vulnerability checker",
+  "main": "index.js",
+  "dependencies": {
+    "request-promise": "^4.2.2",
+    "request": "^2.83.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LilithTundrus/NVDNotifier.git"
+  },
+  "author": "Lilith Tundrus",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/LilithTundrus/NVDNotifier/issues"
+  },
+  "homepage": "https://github.com/LilithTundrus/NVDNotifier#readme"
+}
