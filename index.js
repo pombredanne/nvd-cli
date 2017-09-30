@@ -22,7 +22,7 @@ Promise.resolve()                                               //start the prom
             headers: {
                 'User-Agent': userAgent
             },
-            json: true                                  //Automatically parses the JSON string in the response
+            json: false                                  //Automatically parses the JSON string in the response
         };
         return rp(options);
     })
