@@ -3,9 +3,14 @@ const request = require('request');                             //for NVD API ca
 const rp = require('request-promise');                          //wrap request with promises for easir flow control
 const fs = require('fs');                                       //for reading the JSON file
 const userAgent = `Node ${process.version}`;                //the user agent we set to talk to github
-
+const unzipper = require('unzipper');
+const util = require('util');                                             //for using child-process-promise
+const exec = require('child-process-promise').exec;
 //simple script to get recent NVD JSON data from their CDN in a zip format
 //unzip it and do some stuff using past project's code
+
+//Notes:
+//Looks like request is corrupting the ZIP file,using CURL instead
 
 //TODO:
 //Allow for vulerability severity configuration based on the config.js file
@@ -17,25 +22,26 @@ Promise.resolve()                                               //start the prom
     })
     .then(() => {
         //Get the RECENT json that is in .zip format
-        var options = {
-            uri: `https://static.nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-recent.json.zip`,
-            headers: {
-                'User-Agent': userAgent
-            },
-            //json: false                                  //Automatically parses the JSON string in the response
-        };
-        return rp(options)
-        .then((response) => {
-            return response;
+        return new Promise((resolve, reject) => {
+            exec(`curl "https://static.nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-recent.json.zip" >>test.zip`)
+                .then(function (result) {
+                    var stdout = result.stdout;
+                    var stderr = result.stderr;
+                    console.log('stderr: ', stderr);                    //debugging, redundant
+                    fs.writeFileSync('test.zip', stdout)       //write the curled faPage to file
+                    return resolve(stdout)
+                })
         })
+
     })
-    .then(() => {
+    .then((zippedJSON) => {
         //unzip the JSON and write to file
+        fs.createReadStream('test.zip')
+            .pipe(unzipper.Extract({ path: './NVDJSON' }));
     })
     .then(() => {
         //for now just to get things working, list data about ALL recents
     })
-
     .then(() => {
         console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
     })
