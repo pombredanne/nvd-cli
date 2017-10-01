@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 const request = require('request');                             //for NVD API calls
 const rp = require('request-promise');                          //wrap request with promises for easir flow control
 const fs = require('fs');                                       //for reading the JSON file
@@ -30,9 +30,9 @@ Promise.resolve()                                               //start the prom
                     var stdout = result.stdout;
                     var stderr = result.stderr;
                     console.log('stderr: ', stderr);            //debugging
-                    return resolve(stdout)
-                })
-        })
+                    return resolve(stdout);
+                });
+        });
     })
     .then((zippedJSON) => {
         //unzip the JSON and write to file
@@ -53,5 +53,5 @@ Promise.resolve()                                               //start the prom
     })
     .catch((err) => {
         console.log(`Ended with error at ${new Date().toISOString()}:
-        ${err}`)
+        ${err}`);
     });
