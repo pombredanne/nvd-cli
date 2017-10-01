@@ -28,7 +28,6 @@ Promise.resolve()                                               //start the prom
                     var stdout = result.stdout;
                     var stderr = result.stderr;
                     console.log('stderr: ', stderr);                    //debugging, redundant
-                    fs.writeFileSync('test.zip', stdout)       //write the curled faPage to file
                     return resolve(stdout)
                 })
         })
@@ -45,3 +44,7 @@ Promise.resolve()                                               //start the prom
     .then(() => {
         console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
     })
+    .catch((err) => {
+        console.log(`Ended with error at ${new Date().toISOString()}:
+        ${err}`)
+    });
