@@ -6,6 +6,7 @@ const userAgent = `Node ${process.version}`;                //the user agent we 
 const unzipper = require('unzipper');
 const util = require('util');                                             //for using child-process-promise
 const exec = require('child-process-promise').exec;
+const config = require('./config');
 //simple script to get recent NVD JSON data from their CDN in a zip format
 //unzip it and do some stuff using past project's code
 
@@ -23,7 +24,7 @@ Promise.resolve()                                               //start the prom
     .then(() => {
         //Get the RECENT json that is in .zip format
         return new Promise((resolve, reject) => {
-            exec(`curl "https://static.nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-recent.json.zip" >>test.zip`)
+            exec(`curl "${config.NVDURL}" >>test.zip`)
                 .then(function (result) {
                     var stdout = result.stdout;
                     var stderr = result.stderr;
@@ -35,8 +36,8 @@ Promise.resolve()                                               //start the prom
     })
     .then((zippedJSON) => {
         //unzip the JSON and write to file
-        fs.createReadStream('test.zip')
-            .pipe(unzipper.Extract({ path: './NVDJSON' }));
+        return fs.createReadStream('test.zip')
+            .pipe(unzipper.Extract({ path: config.NVDPath }));
     })
     .then(() => {
         //for now just to get things working, list data about ALL recents
