@@ -15,6 +15,7 @@ const config = require('./config');
 
 //TODO:
 //Allow for vulerability severity configuration based on the config.js file
+///get the XML too eventually to allow for both URLs to be used?
 
 //script starts here
 Promise.resolve()                                               //start the promise chain as resolved to avoid issues
