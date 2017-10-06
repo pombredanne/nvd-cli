@@ -3,7 +3,7 @@ const request = require('request');                             //for NVD API ca
 const rp = require('request-promise');                          //wrap request with promises for easir flow control
 const fs = require('fs');                                       //for reading the JSON file
 const userAgent = `Node ${process.version}`;                    //the user agent we set to talk to github
-const unzipper = require('unzipper');
+var extract = require('extract-zip');
 const util = require('util');                                   //for using child-process-promise
 const exec = require('child-process-promise').exec;
 const config = require('./config');
@@ -25,7 +25,7 @@ Promise.resolve()                                               //start the prom
     .then(() => {
         //Get the RECENT json that is in .zip format
         return new Promise((resolve, reject) => {
-            exec(`curl "${config.NVDURL}" >>test.zip`)
+            exec(`curl "${config.NVDURL}" > test.zip`)
                 .then(function (result) {
                     var stdout = result.stdout;
                     var stderr = result.stderr;
@@ -36,8 +36,10 @@ Promise.resolve()                                               //start the prom
     })
     .then((zippedJSON) => {
         //unzip the JSON and write to file
-        return fs.createReadStream('test.zip')
-            .pipe(unzipper.Extract({ path: config.NVDPath }));
+        extract('test.zip', { dir: process.cwd() }, function (err) {
+            // extraction is complete. make sure to handle the err 
+            throw new Error(err)
+        })
     })
     .then(() => {
         //read file contents to memory

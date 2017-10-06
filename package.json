@@ -1,10 +1,11 @@
 {
   "name": "nvdnotifier",
   "version": "1.0.0",
-  "description": "SMall NVD recent vulnerability checker",
+  "description": "Small NVD recent vulnerability checker",
   "main": "index.js",
   "dependencies": {
     "child-process-promise": "^2.2.1",
+    "extract-zip": "^1.6.5",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "unzipper": "^0.8.9"
