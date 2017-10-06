@@ -36,14 +36,15 @@ Promise.resolve()                                               //start the prom
     })
     .then((zippedJSON) => {
         //unzip the JSON and write to file
-        extract('test.zip', { dir: process.cwd() }, function (err) {
+        //looks like this module only allows cwd extracts
+        extract('test.zip', { dir: process.cwd()}, function (err) {
             // extraction is complete. make sure to handle the err 
             throw new Error(err)
         })
     })
     .then(() => {
         //read file contents to memory
-        var NVDJSON = fs.readFileSync(`${config.NVDPath}/${config.NVDJSONFileName}`, 'utf-8');
+        var NVDJSON = fs.readFileSync(config.NVDJSONFileName, 'utf-8');
         return NVDJSON;
     })
     .then((NVDJSONData) => {
