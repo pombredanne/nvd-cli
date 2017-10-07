@@ -34,12 +34,12 @@ Promise.resolve()                                               //start the prom
                 });
         });
     })
-    .then((zippedJSON) => {
+    .then(() => {
         //unzip the JSON and write to file
         //looks like this module only allows cwd extracts
-        extract('test.zip', { dir: process.cwd()}, function (err) {
+        return extract('test.zip', { dir: process.cwd() }, function (err) {
             // extraction is complete. make sure to handle the err 
-            throw new Error(err)
+            console.log(err)
         })
     })
     .then(() => {
@@ -49,12 +49,23 @@ Promise.resolve()                                               //start the prom
     })
     .then((NVDJSONData) => {
         //for now just to get things working, list data about ALL recents
-        console.log(NVDJSONData.length);
+        console.log(NVDJSONData.length);                        //debugging
+        //console.log(NVDJSONData);                               //debugging
+        let parsedNVDData = JSON.parse(NVDJSONData);
+        console.log(parsedNVDData);
+        return parsedNVDData;
+    })
+    .then((NVDObj) => {
+        console.log(`CVE data version: ${NVDObj.CVE_data_version}`);
+        console.log(`CVE count: ${NVDObj.CVE_data_numberOfCVEs}`);
+        console.log(`Last Updated: ${NVDObj.CVE_data_timestamp}`);
+        NVDObj.CVE_Items.forEach((entry, index) => {
+            console.log(entry.cve.affects.vendor);
+        })
     })
     .then(() => {
         console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
     })
     .catch((err) => {
-        console.log(`Ended with error at ${new Date().toISOString()}:
-        ${err}`);
+        console.log(`Ended with error at ${new Date().toISOString()}:${err}`);
     });
