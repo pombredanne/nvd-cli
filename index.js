@@ -4,9 +4,12 @@ const rp = require('request-promise');                          //wrap request w
 const fs = require('fs');                                       //for reading the JSON file
 const userAgent = `Node ${process.version}`;                    //the user agent we set to talk to github
 var extract = require('extract-zip');
-const util = require('util');                                   //for using child-process-promise
+const util = require('util');                                   //for using child-process
 const exec = require('child-process-promise').exec;
-const config = require('./config');
+const config = require('./config');                             //confiog file for script
+//this is long, redo!
+const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
+
 //simple script to get recent NVD JSON data from their CDN in a zip format
 //unzip it and check against a set of manufacturers to track vulnerabilites
 //for
