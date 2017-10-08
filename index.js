@@ -60,7 +60,12 @@ Promise.resolve()                                               //start the prom
         console.log(`CVE count: ${NVDObj.CVE_data_numberOfCVEs}`);
         console.log(`Last Updated: ${NVDObj.CVE_data_timestamp}`);
         NVDObj.CVE_Items.forEach((entry, index) => {
-            console.log(entry.cve.affects.vendor);
+            //console.log(entry.cve.affects.vendor.vendor_data);
+            console.log(entry.cve.description.description_data[0].value)
+            entry.cve.affects.vendor.vendor_data.forEach((entryV, indexV) => {
+                console.log("Vendor name: " + entryV.vendor_name);
+                console.log(entryV.product.product_data);
+            })
         })
     })
     .then(() => {
