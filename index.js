@@ -8,7 +8,8 @@ const util = require('util');                                   //for using chil
 const exec = require('child-process-promise').exec;
 const config = require('./config');
 //simple script to get recent NVD JSON data from their CDN in a zip format
-//unzip it and do some stuff using past project's code
+//unzip it and check against a set of manufacturers to track vulnerabilites
+//for
 
 //Notes:
 //Looks like request is corrupting the ZIP file,using CURL instead
@@ -39,20 +40,19 @@ Promise.resolve()                                               //start the prom
         //looks like this module only allows cwd extracts
         return extract('test.zip', { dir: process.cwd() }, function (err) {
             // extraction is complete. make sure to handle the err 
+            //looks like this package also whines about an undefined error
             console.log(err)
         })
     })
     .then(() => {
         //read file contents to memory
-        var NVDJSON = fs.readFileSync(config.NVDJSONFileName, 'utf-8');
+        let NVDJSON = fs.readFileSync(config.NVDJSONFileName, 'utf-8');
         return NVDJSON;
     })
     .then((NVDJSONData) => {
         //for now just to get things working, list data about ALL recents
         console.log(NVDJSONData.length);                        //debugging
-        //console.log(NVDJSONData);                               //debugging
         let parsedNVDData = JSON.parse(NVDJSONData);
-        console.log(parsedNVDData);
         return parsedNVDData;
     })
     .then((NVDObj) => {
