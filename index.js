@@ -22,10 +22,8 @@ const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 ///get the XML too eventually to allow for both URLs to be used?
 
 //script starts here
+console.log(`\nNVD Recent Vulnerability Script Started on ${new Date().toISOString()}`);
 Promise.resolve()                                               //start the promise chain as resolved to avoid issues
-    .then(() => {
-        console.log(`\nNVD Recent Vulnerability Script Started on ${new Date().toISOString()}`);
-    })
     .then(() => {
         //Get the RECENT json that is in .zip format
         return new Promise((resolve, reject) => {
