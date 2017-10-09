@@ -1,0 +1,6 @@
+[
+    {
+        "manufacturerName": "Apache",   //SW Vendor
+        "softwareName": "Apache Maven"  //Product name (currently unused)
+    }
+]
