@@ -61,18 +61,23 @@ Promise.resolve()                                               //start the prom
         console.log(`CVE count: ${NVDObj.CVE_data_numberOfCVEs}`);
         console.log(`Last Updated: ${NVDObj.CVE_data_timestamp}`);
         NVDObj.CVE_Items.forEach((entry, index) => {
-            //console.log(entry.cve.affects.vendor.vendor_data);
-            //console.log(entry.cve.description.description_data[0].value)
             entry.cve.affects.vendor.vendor_data.forEach((entryV, indexV) => {
                 //check against the list of vendors to check for vulnerabilities
                 if (entryV.vendor_name.toLowerCase() == swChecklist[0].manufacturerName.toLowerCase()) {
                     console.log("\nVendor name: " + entryV.vendor_name);
                     console.log("Product name: " + entryV.product.product_data[0].product_name);
+                    //get the date here
+                    console.log("Published Date: " + entry.publishedDate);
+                    console.log("Last modified: " + entry.lastModifiedDate);
                     console.log("Vulnerability description:\n" + entry.cve.description.description_data[0].value);
                     //log all of the versions affected:
+                    var versionsAffected = [];
                     entryV.product.product_data[0].version.version_data.forEach((version) => {
-                        console.log("Affected version: " + version.version_value);
+                        //console.log("Affected version: " + version.version_value);
+                        versionsAffected.push(version.version_value);
                     })
+                    console.log('Versions Affected: ' + versionsAffected.join('    '))
+                    //log impact score here
                 }
 
             })
