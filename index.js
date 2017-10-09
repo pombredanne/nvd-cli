@@ -73,11 +73,13 @@ Promise.resolve()                                               //start the prom
                     //log all of the versions affected:
                     var versionsAffected = [];
                     entryV.product.product_data[0].version.version_data.forEach((version) => {
-                        //console.log("Affected version: " + version.version_value);
                         versionsAffected.push(version.version_value);
                     })
                     console.log('Versions Affected: ' + versionsAffected.join('    '))
-                    //log impact score here
+                    //log impact score here v3 and v2
+                    console.log("Attack vector: " + entry.impact.baseMetricV3.cvssV3.attackVector);
+                    console.log("V3 Severity: " + entry.impact.baseMetricV3.cvssV3.baseSeverity + ' ' + '(' +entry.impact.baseMetricV3.cvssV3.baseScore+ ')');
+
                 }
 
             })
