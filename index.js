@@ -84,7 +84,7 @@ Promise.resolve()                                               // start the pro
                         // log impact score here v3 and v2
                         console.log(`Attack vector: ${entry.impact.baseMetricV3.cvssV3.attackVector}`);
                         console.log(`V3 Severity: ${entry.impact.baseMetricV3.cvssV3.baseSeverity} (${entry.impact.baseMetricV3.cvssV3.baseScore})`);
-
+                        console.log(`V2 Severity: ${entry.impact.baseMetricV2.severity} (${entry.impact.baseMetricV2.cvssV2.baseScore})`);
                     }
                 });
 
