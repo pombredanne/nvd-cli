@@ -65,24 +65,27 @@ Promise.resolve()                                               //start the prom
         NVDObj.CVE_Items.forEach((entry, index) => {
             entry.cve.affects.vendor.vendor_data.forEach((entryV, indexV) => {
                 //check against the list of vendors to check for vulnerabilities
-                if (entryV.vendor_name.toLowerCase() == swChecklist[0].manufacturerName.toLowerCase()) {
-                    console.log("\nVendor name: " + entryV.vendor_name);
-                    console.log("Product name: " + entryV.product.product_data[0].product_name);
-                    //get the date here
-                    console.log("Published Date: " + entry.publishedDate);
-                    console.log("Last modified: " + entry.lastModifiedDate);
-                    console.log("Vulnerability description:\n" + entry.cve.description.description_data[0].value);
-                    //log all of the versions affected:
-                    var versionsAffected = [];
-                    entryV.product.product_data[0].version.version_data.forEach((version) => {
-                        versionsAffected.push(version.version_value);
-                    })
-                    console.log('\nVersions Affected: ' + versionsAffected.join('    '))
-                    //log impact score here v3 and v2
-                    console.log("Attack vector: " + entry.impact.baseMetricV3.cvssV3.attackVector);
-                    console.log("V3 Severity: " + entry.impact.baseMetricV3.cvssV3.baseSeverity + ' ' + '(' + entry.impact.baseMetricV3.cvssV3.baseScore + ')');
+                swChecklist.forEach((item, itemIndex) => {
+                    if (entryV.vendor_name.toLowerCase() == item.manufacturerName.toLowerCase() && entryV.product.product_data[0].product_name == item.softwareName.toLowerCase()) {
+                        console.log("\nVendor name: " + entryV.vendor_name);
+                        console.log("Product name: " + entryV.product.product_data[0].product_name);
+                        //get the date here
+                        console.log("Published Date: " + entry.publishedDate);
+                        console.log("Last modified: " + entry.lastModifiedDate);
+                        console.log("Vulnerability description:\n" + entry.cve.description.description_data[0].value);
+                        //log all of the versions affected:
+                        var versionsAffected = [];
+                        entryV.product.product_data[0].version.version_data.forEach((version) => {
+                            versionsAffected.push(version.version_value);
+                        })
+                        console.log('\nVersions Affected: ' + versionsAffected.join('    '))
+                        //log impact score here v3 and v2
+                        console.log("Attack vector: " + entry.impact.baseMetricV3.cvssV3.attackVector);
+                        console.log("V3 Severity: " + entry.impact.baseMetricV3.cvssV3.baseSeverity + ' ' + '(' + entry.impact.baseMetricV3.cvssV3.baseScore + ')');
 
-                }
+                    }
+                })
+
             })
         })
     })
