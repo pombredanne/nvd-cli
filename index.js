@@ -1,6 +1,4 @@
 "use strict";
-const request = require('request');                             // for NVD API calls
-const rp = require('request-promise');                          // wrap request with promises for easir flow control
 const fs = require('fs');                                       // for reading the JSON file
 const userAgent = `Node ${process.version}`;                    // the user agent we set to talk to github
 var extract = require('extract-zip');
@@ -12,9 +10,6 @@ const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 simple script to get recent NVD JSON data from their CDN in a zip format
 unzip it and check against a set of manufacturers & software products to track vulnerabilites
 
-Notes:
-    Looks like request is corrupting the ZIP file,using CURL instead
-
 
 TODO: Allow for vulerability severity configuration based on the config.js file
 TODO: get the XML too eventually to allow for both URLs to be used?
@@ -22,14 +17,13 @@ TODO: better format the data
 TODO: allow argument flag for getting RECENT or ALL year 20XX vulnerabilities
 TODO: figure out what the hell this was intended to do with the data
 TODO: Do something with the date on NVD entries
-TODO: redo all of this
+TODO: allow for a -r (recent) or -f (full-check) arg
 */
 
 //script starts here
 console.log(`\nNVD RECENT Vulnerability Script Started on ${new Date().toISOString()}\n`);
 Promise.resolve()                                               // start the promise chain as resolved to avoid issues
-    .then(() => {
-        // Get the RECENT json that is in .zip format
+    .then(() => {                                               // Get the RECENT json that is in .zip format
         return new Promise((resolve, reject) => {
             exec(`curl "${config.NVDURL}" > test.zip`)
                 .then(function (result) {
@@ -41,23 +35,15 @@ Promise.resolve()                                               // start the pro
         });
     })
     .then(() => {
-        // unzip the JSON and write to file
-        // looks like this module only allows cwd extracts
+        // unzip the JSON and write to file, looks like this module only allows cwd extracts
         return extract('test.zip', { dir: process.cwd() }, function (err) {
-            // extraction is complete. make sure to handle the err 
-            // looks like this package also whines about an undefined error
-            console.log(err);
+            //return console.log(err);                                               // extraction is complete,  make sure to handle the err 
         });
     })
     .then(() => {
         // read file contents to memory
         let NVDJSON = fs.readFileSync(config.NVDJSONFileName, 'utf-8');
-        return NVDJSON;
-    })
-    .then((NVDJSONData) => {
-        // for now just to get things working, list data about ALL recents
-        console.log(NVDJSONData.length);                        // debugging
-        let parsedNVDData = JSON.parse(NVDJSONData);
+        let parsedNVDData = JSON.parse(NVDJSON);
         return parsedNVDData;
     })
     .then((NVDObj) => {
