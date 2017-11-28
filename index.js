@@ -20,9 +20,11 @@ const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 //TODO:
 //Allow for vulerability severity configuration based on the config.js file
 ///get the XML too eventually to allow for both URLs to be used?
+//better format the data
+//allow argument flag for getting RECENT or ALL year 20XX vulnerabilities
 
 //script starts here
-console.log(`\nNVD Recent Vulnerability Script Started on ${new Date().toISOString()}`);
+console.log(`\nNVD RECENT Vulnerability Script Started on ${new Date().toISOString()}\n`);
 Promise.resolve()                                               //start the promise chain as resolved to avoid issues
     .then(() => {
         //Get the RECENT json that is in .zip format
@@ -75,13 +77,12 @@ Promise.resolve()                                               //start the prom
                     entryV.product.product_data[0].version.version_data.forEach((version) => {
                         versionsAffected.push(version.version_value);
                     })
-                    console.log('Versions Affected: ' + versionsAffected.join('    '))
+                    console.log('\nVersions Affected: ' + versionsAffected.join('    '))
                     //log impact score here v3 and v2
                     console.log("Attack vector: " + entry.impact.baseMetricV3.cvssV3.attackVector);
-                    console.log("V3 Severity: " + entry.impact.baseMetricV3.cvssV3.baseSeverity + ' ' + '(' +entry.impact.baseMetricV3.cvssV3.baseScore+ ')');
+                    console.log("V3 Severity: " + entry.impact.baseMetricV3.cvssV3.baseSeverity + ' ' + '(' + entry.impact.baseMetricV3.cvssV3.baseScore + ')');
 
                 }
-
             })
         })
     })
