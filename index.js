@@ -7,7 +7,6 @@ var extract = require('extract-zip');
 const util = require('util');                                   // for using child-process
 const exec = require('child-process-promise').exec;
 const config = require('./config');                             // confiog file for script
-//this is long, redo!
 const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 /*
 simple script to get recent NVD JSON data from their CDN in a zip format
@@ -22,7 +21,8 @@ TODO: get the XML too eventually to allow for both URLs to be used?
 TODO: better format the data
 TODO: allow argument flag for getting RECENT or ALL year 20XX vulnerabilities
 TODO: figure out what the hell this was intended to do with the data
-TODO: Dosomething with the date on NVD entries
+TODO: Do something with the date on NVD entries
+TODO: redo all of this
 */
 
 //script starts here
@@ -47,7 +47,7 @@ Promise.resolve()                                               // start the pro
             // extraction is complete. make sure to handle the err 
             // looks like this package also whines about an undefined error
             console.log(err);
-        })
+        });
     })
     .then(() => {
         // read file contents to memory
@@ -56,7 +56,7 @@ Promise.resolve()                                               // start the pro
     })
     .then((NVDJSONData) => {
         // for now just to get things working, list data about ALL recents
-        console.log(NVDJSONData.length);                        //debugging
+        console.log(NVDJSONData.length);                        // debugging
         let parsedNVDData = JSON.parse(NVDJSONData);
         return parsedNVDData;
     })
@@ -69,27 +69,27 @@ Promise.resolve()                                               // start the pro
                 // check against the list of vendors to check for vulnerabilities
                 swChecklist.forEach((item, itemIndex) => {
                     if (entryV.vendor_name.toLowerCase() == item.manufacturerName.toLowerCase() && entryV.product.product_data[0].product_name == item.softwareName.toLowerCase()) {
-                        console.log("\nVendor name: " + entryV.vendor_name);
-                        console.log("Product name: " + entryV.product.product_data[0].product_name);
+                        console.log(`\nVendor name:  ${entryV.vendor_name}`);
+                        console.log(`Product name: ${entryV.product.product_data[0].product_name}`);
                         // get the date here
-                        console.log("Published Date: " + entry.publishedDate);
-                        console.log("Last modified: " + entry.lastModifiedDate);
-                        console.log("Vulnerability description:\n" + entry.cve.description.description_data[0].value);
+                        console.log(`Published Date: ${entry.publishedDate}`);
+                        console.log(`Last modified: ${entry.lastModifiedDate}`);
+                        console.log(`Vulnerability description:\n ${entry.cve.description.description_data[0].value}`);
                         // log all of the versions affected:
                         var versionsAffected = [];
                         entryV.product.product_data[0].version.version_data.forEach((version) => {
                             versionsAffected.push(version.version_value);
-                        })
-                        console.log('\nVersions Affected: ' + versionsAffected.join('    '))
+                        });
+                        console.log(`\nVersions Affected: ${versionsAffected.join('    ')}`);
                         // log impact score here v3 and v2
-                        console.log("Attack vector: " + entry.impact.baseMetricV3.cvssV3.attackVector);
-                        console.log("V3 Severity: " + entry.impact.baseMetricV3.cvssV3.baseSeverity + ' ' + '(' + entry.impact.baseMetricV3.cvssV3.baseScore + ')');
+                        console.log(`Attack vector: ${entry.impact.baseMetricV3.cvssV3.attackVector}`);
+                        console.log(`V3 Severity: ${entry.impact.baseMetricV3.cvssV3.baseSeverity} (${entry.impact.baseMetricV3.cvssV3.baseScore})`);
 
                     }
-                })
+                });
 
-            })
-        })
+            });
+        });
     })
     .then(() => {
         console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
