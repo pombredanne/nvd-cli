@@ -22,6 +22,7 @@ const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 ///get the XML too eventually to allow for both URLs to be used?
 //better format the data
 //allow argument flag for getting RECENT or ALL year 20XX vulnerabilities
+// figure out what the hell this was intended to do with the data
 
 //script starts here
 console.log(`\nNVD RECENT Vulnerability Script Started on ${new Date().toISOString()}\n`);
