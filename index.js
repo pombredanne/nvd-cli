@@ -3,13 +3,13 @@ const fs = require('fs');                                       // for reading t
 const userAgent = `Node ${process.version}`;                    // the user agent we set to talk to github
 var extract = require('extract-zip');
 const util = require('util');                                   // for using child-process
+const PDFDocument = require('pdfkit');
 const exec = require('child-process-promise').exec;
 const config = require('./config');                             // confiog file for script
 const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 /*
 simple script to get recent NVD JSON data from their CDN in a zip format
 unzip it and check against a set of manufacturers & software products to track vulnerabilites
-
 
 TODO: Allow for vulerability severity configuration based on the config.js file
 TODO: get the XML too eventually to allow for both URLs to be used?
@@ -18,6 +18,7 @@ TODO: allow argument flag for getting RECENT or ALL year 20XX vulnerabilities
 TODO: figure out what the hell this was intended to do with the data
 TODO: Do something with the date on NVD entries
 TODO: allow for a -r (recent) or -f (full-check) arg
+TODO: create a CLI search functionality
 */
 
 //script starts here
@@ -98,7 +99,11 @@ Promise.resolve()                                               // start the pro
     })
     .then((affectedItemsArray) => {
         // write the report (to JSON for now!)
-        console.log(affectedItemsArray.length)
+       affectedItemsArray.forEach((entry, index) => {
+           console.log(entry);
+           var doc = new PDFDocument;
+           
+       })
     })
     .then(() => {
         console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
