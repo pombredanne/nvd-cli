@@ -50,14 +50,15 @@ Promise.resolve()                                               // start the pro
         console.log(`CVE data version: ${NVDObj.CVE_data_version}`);
         console.log(`CVE count: ${NVDObj.CVE_data_numberOfCVEs}`);
         console.log(`Last Updated: ${NVDObj.CVE_data_timestamp}`);
+        var affectedItems = [];
         NVDObj.CVE_Items.forEach((entry, index) => {
+            var affectedItem = {};
             entry.cve.affects.vendor.vendor_data.forEach((entryV, indexV) => {
                 // check against the list of vendors to check for vulnerabilities
                 swChecklist.forEach((item, itemIndex) => {
                     if (entryV.vendor_name.toLowerCase() == item.manufacturerName.toLowerCase() && entryV.product.product_data[0].product_name == item.softwareName.toLowerCase()) {
                         console.log(`\nVendor name:  ${entryV.vendor_name}`);
                         console.log(`Product name: ${entryV.product.product_data[0].product_name}`);
-                        // get the date here
                         console.log(`Published Date: ${entry.publishedDate}`);
                         console.log(`Last modified: ${entry.lastModifiedDate}`);
                         console.log(`Vulnerability description:\n ${entry.cve.description.description_data[0].value}`);
@@ -71,11 +72,33 @@ Promise.resolve()                                               // start the pro
                         console.log(`Attack vector: ${entry.impact.baseMetricV3.cvssV3.attackVector}`);
                         console.log(`V3 Severity: ${entry.impact.baseMetricV3.cvssV3.baseSeverity} (${entry.impact.baseMetricV3.cvssV3.baseScore})`);
                         console.log(`V2 Severity: ${entry.impact.baseMetricV2.severity} (${entry.impact.baseMetricV2.cvssV2.baseScore})`);
+                        // push all of the data to an the affectedItem Obj
+                        affectedItem.vendorName = entryV.vendor_name;
+                        affectedItem.productName = entryV.product.product_data[0].product_name;
+                        affectedItem.publishedDate = entry.publishedDate;
+                        affectedItem.lastModifiedDate = entry.lastModifiedDate;
+                        affectedItem.vulnerabilityDescription
+                        affectedItem.versionsAffected = versionsAffected;
+                        affectedItem.attackVector = entry.impact.baseMetricV3.cvssV3.attackVector
+                        affectedItem.v3SeverityScore = {
+                            severity: entry.impact.baseMetricV3.cvssV3.baseSeverity,
+                            scoreString: entry.impact.baseMetricV3.cvssV3.baseScore
+                        }
+                        affectedItem.v2SeverityScore = {
+                            severity: entry.impact.baseMetricV2.severity,
+                            scoreString: entry.impact.baseMetricV2.cvssV2.baseScore
+                        }
+                        // push the affected item to the array
+                        affectedItems.push(affectedItem)
                     }
                 });
-
             });
         });
+        return affectedItems;
+    })
+    .then((affectedItemsArray) => {
+        // write the report (to JSON for now!)
+        console.log(affectedItemsArray.length)
     })
     .then(() => {
         console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
