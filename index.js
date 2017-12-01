@@ -7,6 +7,7 @@ const PDFDocument = require('pdfkit');
 const exec = require('child-process-promise').exec;
 const config = require('./config');                             // confiog file for script
 const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
+var globalNVDJSON;
 /*
 simple script to get recent NVD JSON data from their CDN in a zip format
 unzip it and check against a set of manufacturers & software products to track vulnerabilites
@@ -104,8 +105,10 @@ Promise.resolve()                                               // start the pro
             var doc = new PDFDocument;
             doc.pipe(fs.createWriteStream('output.pdf'))
             doc.fontSize(16)
-            doc.text('NVD RECENT Vulnerability Check Report', { align: 'center' });
-
+            doc.text(`NVD RECENT Vulnerability Check Report ${new Date().toDateString()}`, { align: 'center' });
+            doc.moveDown()
+            doc.fontSize(14)
+            doc.text(`Recent vulnerabilites matched using config file:`)
             doc.end()
         })
     })
