@@ -113,12 +113,12 @@ Promise.resolve()                                               // start the pro
         affectedItemsArray.forEach((entry, index) => {
             console.log(entry);
             doc.text(`\n${capitalizeFirstLetter(entry.vendorName)} ${capitalizeFirstLetter(entry.productName)}:`, { stroke: true });
-            doc.text(`Versions Affected: ${entry.versionsAffected.join(' ')}`);
+            doc.text(`Versions Affected: ${entry.versionsAffected.join(', ')}`);
             doc.text(`Attack Vector: ${entry.attackVector}`);
             doc.text(`\nDescription: ${entry.vulnerabilityDescription}`);
             doc.text(`\nV3 Score: ${entry.v3SeverityScore.severity} (${entry.v3SeverityScore.scoreString})`);
             doc.text(`V2 Score: ${entry.v2SeverityScore.severity} (${entry.v2SeverityScore.scoreString})`);
-
+            doc.text(`\nPublished: ${entry.publishedDate}    Modified: ${entry.lastModifiedDate}`)
         });
 
         doc.text('\nEnd of File');
