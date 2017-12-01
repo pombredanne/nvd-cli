@@ -64,21 +64,10 @@ Promise.resolve()                                               // start the pro
                 // check against the list of vendors to check for vulnerabilities
                 swChecklist.forEach((item, itemIndex) => {
                     if (entryV.vendor_name.toLowerCase() == item.manufacturerName.toLowerCase() && entryV.product.product_data[0].product_name == item.softwareName.toLowerCase()) {
-                        console.log(`\nVendor name:  ${entryV.vendor_name}`);
-                        console.log(`Product name: ${entryV.product.product_data[0].product_name}`);
-                        console.log(`Published Date: ${entry.publishedDate}`);
-                        console.log(`Last modified: ${entry.lastModifiedDate}`);
-                        console.log(`Vulnerability description:\n ${entry.cve.description.description_data[0].value}`);
-                        // log all of the versions affected:
                         var versionsAffected = [];
                         entryV.product.product_data[0].version.version_data.forEach((version) => {
                             versionsAffected.push(version.version_value);
                         });
-                        console.log(`\nVersions Affected: ${versionsAffected.join('    ')}`);
-                        // log impact score here v3 and v2
-                        console.log(`Attack vector: ${entry.impact.baseMetricV3.cvssV3.attackVector}`);
-                        console.log(`V3 Severity: ${entry.impact.baseMetricV3.cvssV3.baseSeverity} (${entry.impact.baseMetricV3.cvssV3.baseScore})`);
-                        console.log(`V2 Severity: ${entry.impact.baseMetricV2.severity} (${entry.impact.baseMetricV2.cvssV2.baseScore})`);
                         // push all of the data to an the affectedItem Obj
                         affectedItem.vendorName = entryV.vendor_name;
                         affectedItem.productName = entryV.product.product_data[0].product_name;
@@ -110,21 +99,26 @@ Promise.resolve()                                               // start the pro
         doc.fontSize(16);
         doc.font(config.defaultFontLocation);
         doc.text(`NVD RECENT Vulnerability Check Report ${new Date().toDateString()}`, { align: 'center', stroke: true });
-        doc.fontSize(14);
+        doc.fontSize(12);
         doc.moveDown();
         doc.moveDown();
         doc.text(`CVE data version: ${globalNVDJSON.CVE_data_version}`);
         doc.text(`CVE count: ${globalNVDJSON.CVE_data_numberOfCVEs}`);
         doc.text(`Last Updated: ${globalNVDJSON.CVE_data_timestamp}`);
         doc.moveDown();
+        doc.fontSize(14);
         doc.text(`RECENT vulnerabilites matched using config file: ${config.checklistName}`, { align: 'center' });
         doc.moveDown();
         // get each affected item's data and format it
         affectedItemsArray.forEach((entry, index) => {
             console.log(entry);
-            doc.text(`\n${capitalizeFirstLetter(entry.vendorName)} ${capitalizeFirstLetter(entry.productName)}:`, {stroke: true});
+            doc.text(`\n${capitalizeFirstLetter(entry.vendorName)} ${capitalizeFirstLetter(entry.productName)}:`, { stroke: true });
             doc.text(`Versions Affected: ${entry.versionsAffected.join(' ')}`);
+            doc.text(`Attack Vector: ${entry.attackVector}`);
             doc.text(`\nDescription: ${entry.vulnerabilityDescription}`);
+            doc.text(`\nV3 Score: ${entry.v3SeverityScore.severity} (${entry.v3SeverityScore.scoreString})`);
+            doc.text(`V2 Score: ${entry.v2SeverityScore.severity} (${entry.v2SeverityScore.scoreString})`);
+
         });
 
         doc.text('\nEnd of File');
