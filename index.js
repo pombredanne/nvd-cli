@@ -80,7 +80,7 @@ Promise.resolve()                                               // start the pro
                         affectedItem.productName = entryV.product.product_data[0].product_name;
                         affectedItem.publishedDate = entry.publishedDate;
                         affectedItem.lastModifiedDate = entry.lastModifiedDate;
-                        affectedItem.vulnerabilityDescription
+                        affectedItem.vulnerabilityDescription = entry.cve.description.description_data[0].value
                         affectedItem.versionsAffected = versionsAffected;
                         affectedItem.attackVector = entry.impact.baseMetricV3.cvssV3.attackVector
                         affectedItem.v3SeverityScore = {
@@ -101,7 +101,6 @@ Promise.resolve()                                               // start the pro
     })
     .then((affectedItemsArray) => {
         // write the report to PDF
-        console.log(entry);
         var doc = new PDFDocument;
         doc.pipe(fs.createWriteStream('output.pdf'));
         doc.fontSize(16);
@@ -114,11 +113,17 @@ Promise.resolve()                                               // start the pro
         doc.text(`Last Updated: ${globalNVDJSON.CVE_data_timestamp}`);
         doc.moveDown();
         doc.text(`RECENT vulnerabilites matched using config file: ${config.checklistName}`, { align: 'center' });
-
-        doc.end()
+        doc.moveDown();
+        // get each affected item's data and format it
         affectedItemsArray.forEach((entry, index) => {
+            console.log(entry)
+            doc.text(`${entry.vendorName} ${entry.productName}`);
 
-        })
+        });
+
+        doc.text('End of File')
+        doc.end()
+
     })
     .then(() => {
         console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
@@ -126,3 +131,8 @@ Promise.resolve()                                               // start the pro
     .catch((err) => {
         console.log(`Ended with error at ${new Date().toISOString()}:${err}`);
     });
+
+
+function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
