@@ -46,6 +46,7 @@ Promise.resolve()                                               // start the pro
         // read file contents to memory
         let NVDJSON = fs.readFileSync(config.NVDJSONFileName, 'utf-8');
         let parsedNVDData = JSON.parse(NVDJSON);
+        globalNVDJSON = parsedNVDData;                              // used to allow the PDF file acess to certain data
         return parsedNVDData;
     })
     .then((NVDObj) => {
@@ -99,17 +100,24 @@ Promise.resolve()                                               // start the pro
         return affectedItems;
     })
     .then((affectedItemsArray) => {
-        // write the report (to JSON for now!)
+        // write the report to PDF
+        console.log(entry);
+        var doc = new PDFDocument;
+        doc.pipe(fs.createWriteStream('output.pdf'));
+        doc.fontSize(16);
+        doc.text(`NVD RECENT Vulnerability Check Report ${new Date().toDateString()}`, { align: 'center', });
+        doc.fontSize(14);
+        doc.moveDown();
+        doc.moveDown();
+        doc.text(`CVE data version: ${globalNVDJSON.CVE_data_version}`);
+        doc.text(`CVE count: ${globalNVDJSON.CVE_data_numberOfCVEs}`);
+        doc.text(`Last Updated: ${globalNVDJSON.CVE_data_timestamp}`);
+        doc.moveDown();
+        doc.text(`RECENT vulnerabilites matched using config file: ${config.checklistName}`, { align: 'center' });
+
+        doc.end()
         affectedItemsArray.forEach((entry, index) => {
-            console.log(entry);
-            var doc = new PDFDocument;
-            doc.pipe(fs.createWriteStream('output.pdf'))
-            doc.fontSize(16)
-            doc.text(`NVD RECENT Vulnerability Check Report ${new Date().toDateString()}`, { align: 'center' });
-            doc.moveDown()
-            doc.fontSize(14)
-            doc.text(`Recent vulnerabilites matched using config file:`)
-            doc.end()
+
         })
     })
     .then(() => {
