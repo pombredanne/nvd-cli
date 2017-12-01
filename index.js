@@ -22,9 +22,11 @@ TODO: figure out what the hell this was intended to do with the data
 TODO: Do something with the date on NVD entries
 TODO: allow for a -r (recent) or -f (full-check) arg
 TODO: create a CLI search functionality
+TODO: fix the weird promise chain thing and chunk functions out
+TODO: when done, work on README
 */
 
-//script starts here
+// script starts here
 console.log(`\nNVD RECENT Vulnerability Script Started on ${new Date().toISOString()}\n`);
 Promise.resolve()                                               // start the promise chain as resolved to avoid issues
     .then(() => {                                               // Get the RECENT json that is in .zip format
@@ -106,7 +108,8 @@ Promise.resolve()                                               // start the pro
         var doc = new PDFDocument;
         doc.pipe(fs.createWriteStream('output.pdf'));
         doc.fontSize(16);
-        doc.text(`NVD RECENT Vulnerability Check Report ${new Date().toDateString()}`, { align: 'center', });
+        doc.font(config.defaultFontLocation);
+        doc.text(`NVD RECENT Vulnerability Check Report ${new Date().toDateString()}`, { align: 'center', stroke: true });
         doc.fontSize(14);
         doc.moveDown();
         doc.moveDown();
@@ -119,11 +122,12 @@ Promise.resolve()                                               // start the pro
         // get each affected item's data and format it
         affectedItemsArray.forEach((entry, index) => {
             console.log(entry);
-            doc.text(`Product: ${capitalizeFirstLetter(entry.vendorName)} ${capitalizeFirstLetter(entry.productName)}`);
-            doc.text(`Version Affected: ${entry.versionsAffected.join(' ')}`)
+            doc.text(`\n${capitalizeFirstLetter(entry.vendorName)} ${capitalizeFirstLetter(entry.productName)}:`, {stroke: true});
+            doc.text(`Versions Affected: ${entry.versionsAffected.join(' ')}`);
+            doc.text(`\nDescription: ${entry.vulnerabilityDescription}`);
         });
 
-        doc.text('End of File');
+        doc.text('\nEnd of File');
         doc.end();
 
     })
