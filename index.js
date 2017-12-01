@@ -38,7 +38,7 @@ Promise.resolve()                                               // start the pro
     .then(() => {
         // unzip the JSON and write to file, looks like this module only allows cwd extracts
         return extract('test.zip', { dir: process.cwd() }, function (err) {
-            //return console.log(err);                                               // extraction is complete,  make sure to handle the err 
+            return console.log(err);                                               // extraction is complete,  make sure to handle the err 
         });
     })
     .then(() => {
@@ -99,11 +99,15 @@ Promise.resolve()                                               // start the pro
     })
     .then((affectedItemsArray) => {
         // write the report (to JSON for now!)
-       affectedItemsArray.forEach((entry, index) => {
-           console.log(entry);
-           var doc = new PDFDocument;
-           
-       })
+        affectedItemsArray.forEach((entry, index) => {
+            console.log(entry);
+            var doc = new PDFDocument;
+            doc.pipe(fs.createWriteStream('output.pdf'))
+            doc.fontSize(16)
+            doc.text('NVD RECENT Vulnerability Check Report', { align: 'center' });
+
+            doc.end()
+        })
     })
     .then(() => {
         console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
