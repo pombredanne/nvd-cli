@@ -12,6 +12,8 @@ var globalNVDJSON;
 simple script to get recent NVD JSON data from their CDN in a zip format
 unzip it and check against a set of manufacturers & software products to track vulnerabilites
 
+Notes: the PDF way to get bold text is 'stroke' not bold
+
 TODO: Allow for vulerability severity configuration based on the config.js file
 TODO: get the XML too eventually to allow for both URLs to be used?
 TODO: better format the data
@@ -116,13 +118,13 @@ Promise.resolve()                                               // start the pro
         doc.moveDown();
         // get each affected item's data and format it
         affectedItemsArray.forEach((entry, index) => {
-            console.log(entry)
-            doc.text(`${entry.vendorName} ${entry.productName}`);
-
+            console.log(entry);
+            doc.text(`Product: ${capitalizeFirstLetter(entry.vendorName)} ${capitalizeFirstLetter(entry.productName)}`);
+            doc.text(`Version Affected: ${entry.versionsAffected.join(' ')}`)
         });
 
-        doc.text('End of File')
-        doc.end()
+        doc.text('End of File');
+        doc.end();
 
     })
     .then(() => {
