@@ -63,29 +63,34 @@ Promise.resolve()                                               // start the pro
             entry.cve.affects.vendor.vendor_data.forEach((entryV, indexV) => {
                 // check against the list of vendors to check for vulnerabilities
                 swChecklist.forEach((item, itemIndex) => {
-                    if (entryV.vendor_name.toLowerCase() == item.manufacturerName.toLowerCase() && entryV.product.product_data[0].product_name == item.softwareName.toLowerCase()) {
-                        var versionsAffected = [];
-                        entryV.product.product_data[0].version.version_data.forEach((version) => {
-                            versionsAffected.push(version.version_value);
-                        });
-                        // push all of the data to an the affectedItem Obj
-                        affectedItem.vendorName = entryV.vendor_name;
-                        affectedItem.productName = entryV.product.product_data[0].product_name;
-                        affectedItem.publishedDate = entry.publishedDate;
-                        affectedItem.lastModifiedDate = entry.lastModifiedDate;
-                        affectedItem.vulnerabilityDescription = entry.cve.description.description_data[0].value
-                        affectedItem.versionsAffected = versionsAffected;
-                        affectedItem.attackVector = entry.impact.baseMetricV3.cvssV3.attackVector
-                        affectedItem.v3SeverityScore = {
-                            severity: entry.impact.baseMetricV3.cvssV3.baseSeverity,
-                            scoreString: entry.impact.baseMetricV3.cvssV3.baseScore
-                        }
-                        affectedItem.v2SeverityScore = {
-                            severity: entry.impact.baseMetricV2.severity,
-                            scoreString: entry.impact.baseMetricV2.cvssV2.baseScore
-                        }
-                        // push the affected item to the array
-                        affectedItems.push(affectedItem)
+                    if (entryV.vendor_name.toLowerCase() == item.manufacturerName.toLowerCase()) {
+                        entryV.product.product_data.forEach((product, productIndex) => {
+                            if (product.productname == item.softwareName.toLowerCase()) {
+                                var versionsAffected = [];
+                                entryV.product.product_data[0].version.version_data.forEach((version) => {
+                                    versionsAffected.push(version.version_value);
+                                });
+                                // push all of the data to an the affectedItem Obj
+                                affectedItem.vendorName = entryV.vendor_name;
+                                affectedItem.productName = entryV.product.product_data[0].product_name;
+                                affectedItem.publishedDate = entry.publishedDate;
+                                affectedItem.lastModifiedDate = entry.lastModifiedDate;
+                                affectedItem.vulnerabilityDescription = entry.cve.description.description_data[0].value
+                                affectedItem.versionsAffected = versionsAffected;
+                                affectedItem.attackVector = entry.impact.baseMetricV3.cvssV3.attackVector
+                                affectedItem.v3SeverityScore = {
+                                    severity: entry.impact.baseMetricV3.cvssV3.baseSeverity,
+                                    scoreString: entry.impact.baseMetricV3.cvssV3.baseScore
+                                }
+                                affectedItem.v2SeverityScore = {
+                                    severity: entry.impact.baseMetricV2.severity,
+                                    scoreString: entry.impact.baseMetricV2.cvssV2.baseScore
+                                }
+                                // push the affected item to the array
+                                affectedItems.push(affectedItem);
+                            }
+                        })
+
                     }
                 });
             });
