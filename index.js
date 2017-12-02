@@ -33,10 +33,7 @@ Promise.resolve()                                               // start the pro
         return getNVDZipFile();
     })
     .then(() => {
-        // unzip the JSON and write to file, looks like this module only allows cwd extracts
-        return extract('test.zip', { dir: process.cwd() }, function (err) {
-            if (err) { return console.log(err); }                                              // extraction is complete,  make sure to handle the err 
-        });
+        return extractZipFile(config.zipFileName);
     })
     .then(() => {
         // read file contents to memory
@@ -153,12 +150,19 @@ function capitalizeFirstLetter(string) {                    //used to clean up s
 
 function getNVDZipFile() {
     return new Promise((resolve, reject) => {
-        exec(`curl "${config.NVDURL}" > test.zip`)
+        exec(`curl "${config.NVDURL}" > ${config.zipFileName}`)
             .then(function (result) {
                 var stdout = result.stdout;
                 var stderr = result.stderr;
                 console.log('stderr: ', stderr);            // debugging
                 return resolve(stdout);
             });
+    });
+}
+
+function extractZipFile(fileNameToExtract) {
+    // unzip the JSON and write to file, looks like this module only allows cwd extracts
+    return extract(fileNameToExtract, { dir: process.cwd() }, function (err) {
+        if (err) { return console.log(err); }                                              // extraction is complete,  make sure to handle the err 
     });
 }
