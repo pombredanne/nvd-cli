@@ -25,6 +25,8 @@ TODO: when done, work on README
 TODO: add filename and type arg handlers
 TODO: use the meta tags for the CVE data eventually
 TODO: flesh out the --full arg further to allow for specific years to be passed
+TODO: fix the issue where the first time something is abtracted, the promise chain tries to read
+it too quickly
 */
 
 function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
@@ -44,10 +46,16 @@ function getNVDZipFile(url, fileLocation) {
 }
 
 function extractZipFile(fileNameToExtract) {
-    // unzip the JSON and write to file, looks like this module only allows cwd extracts
-    return extract(fileNameToExtract, { dir: process.cwd() }, function (err) {
-        if (err) { return console.log(err); }                                              // extraction is complete,  make sure to handle the err 
-    });
+    var promiseTail = Promise.resolve();
+    promiseTail = promiseTail.then(() => {
+        return extract(fileNameToExtract, { dir: process.cwd() }, function (err) {
+            if (err) { return console.log(err); }
+        });
+    })
+        .then(() => {
+            if (debug) { console.log('Extract complete!'); }
+        })
+    return promiseTail;
 }
 
 function parseNVDData(NVDObjArray) {
