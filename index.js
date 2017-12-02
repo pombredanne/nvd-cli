@@ -9,6 +9,7 @@ const config = require('./config');                             // confiog file 
 const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 var globalNVDJSON;
 var defaultArg = '-r';
+const debug = config.debug;
 /*
 simple script to get recent NVD JSON data from their CDN in a zip format
 unzip it and check against a set of manufacturers & software products to track vulnerabilites
@@ -17,11 +18,12 @@ Notes: the PDF way to get bold text is 'stroke' not bold
 
 TODO: Allow for vulerability severity configuration based on the config.js file
 TODO: allow argument flag for getting RECENT or ALL year 20XX vulnerabilities
-TODO: figure out what the hell this was intended to do with the data
 TODO: Do something with the date on NVD entries
 TODO: allow for a -r (recent) or -f (full-check) arg
 TODO: create a CLI search functionality
 TODO: when done, work on README
+TODO: add filename and type arg handlers
+TODO: use the meta tags for the CVE data eventually
 */
 
 function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
@@ -30,7 +32,7 @@ function capitalizeFirstLetter(string) {                    //used to clean up s
 
 function getNVDZipFile() {
     return new Promise((resolve, reject) => {
-        exec(`curl "${config.NVDURL}" > ${config.zipFileName}`)
+        exec(`curl "${config.NVDURLRecent}" > ${config.zipFileNameRecent}`)
             .then(function (result) {
                 var stdout = result.stdout;
                 var stderr = result.stderr;
@@ -142,13 +144,13 @@ function writePDFReport(affectedItemsArray) {
 
 // script starts here
 // args will eventually be processed here
-console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`);
+if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
 if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
     Promise.resolve()                                               // start the promise chain as resolved to avoid issues
         .then(() => getNVDZipFile())                                // Get the RECENT json that is in .zip format
-        .then(() => extractZipFile(config.zipFileName))
+        .then(() => extractZipFile(config.zipFileNameRecent))
         .then(() => {
-            let NVDJSON = fs.readFileSync(config.NVDJSONFileName, 'utf-8');
+            let NVDJSON = fs.readFileSync(config.NVDJSONFileNameRecent, 'utf-8');
             let parsedNVDData = JSON.parse(NVDJSON);
             globalNVDJSON = parsedNVDData;                              // used to allow the PDF file acess to certain data
             return parsedNVDData;
@@ -156,13 +158,15 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
         .then((NVDData) => parseNVDData(NVDData))
         .then((affectedItemsArray) => writePDFReport(affectedItemsArray))
         .then(() => {
-            console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
+            if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
         })
         .catch((err) => {
             console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
         })
 } else if (process.argv[2] == '-f') {
-console.log('AAAAAAA')
+    console.log('AAAAAAA')
 } else {
     //display help file
+    // placeholder
+    console.log('Help:');
 }
