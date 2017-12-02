@@ -6,3 +6,4 @@ exports.zipFileName = './nvdzip.zip'
 exports.NVDJSONFileName = './nvdcve-1.0-recent.json';
 exports.checklistName = './checklist.json';
 exports.defaultFontLocation = './fonts/Raleway-Regular.ttf';
+exports.debug = true;
