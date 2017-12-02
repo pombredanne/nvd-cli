@@ -1,15 +1,14 @@
 "use strict";
 const fs = require('fs');                                       // for reading the JSON file
-const userAgent = `Node ${process.version}`;                    // the user agent we set to talk to github
 var extract = require('extract-zip');
 const util = require('util');                                   // for using child-process
 const PDFDocument = require('pdfkit');
 const exec = require('child-process-promise').exec;
 const config = require('./config');                             // confiog file for script
 const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
-var globalNVDJSON;
-var defaultArg = '-r';
 const debug = config.debug;
+
+var globalNVDJSON;
 /*
 simple script to get recent NVD JSON data from their CDN in a zip format
 unzip it and check against a set of manufacturers & software products to track vulnerabilites
