@@ -23,7 +23,6 @@ TODO: create a CLI search functionality
 TODO: when done, work on README
 */
 
-
 function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -110,7 +109,6 @@ function parseNVDData(NVDObjArray) {
 }
 
 function writePDFReport(affectedItemsArray) {
-    // write the report to PDF
     var doc = new PDFDocument;
     doc.pipe(fs.createWriteStream('output.pdf'));
     doc.fontSize(16);
@@ -137,8 +135,7 @@ function writePDFReport(affectedItemsArray) {
         doc.text(`V2 Score: ${entry.v2SeverityScore.severity} (${entry.v2SeverityScore.scoreString})`);
         doc.text(`\nPublished: ${entry.publishedDate}    Modified: ${entry.lastModifiedDate}`)
     });
-
-    doc.text('\nEnd of File');
+    doc.text('\n\nEnd of File');
     doc.end();
 
 }
