@@ -30,13 +30,13 @@ function capitalizeFirstLetter(string) {                    //used to clean up s
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function getNVDZipFile() {
+function getNVDZipFile(fileLocation) {
     return new Promise((resolve, reject) => {
-        exec(`curl "${config.NVDURLRecent}" > ${config.zipFileNameRecent}`)
+        exec(`curl "${config.NVDURLRecent}" > ${fileLocation}`)
             .then(function (result) {
                 var stdout = result.stdout;
                 var stderr = result.stderr;
-                console.log('stderr: ', stderr);            // debugging
+                if (debug) { console.log('stderr: ', stderr); }
                 return resolve(stdout);
             });
     });
@@ -143,11 +143,12 @@ function writePDFReport(affectedItemsArray) {
 }
 
 // script starts here
-// args will eventually be processed here
+// args are processed before anything is done
 if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
 if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
+    console.log(`Getting NVD recent data to compare against ${config.checklistName}`);
     Promise.resolve()                                               // start the promise chain as resolved to avoid issues
-        .then(() => getNVDZipFile())                                // Get the RECENT json that is in .zip format
+        .then(() => getNVDZipFile(config.zipFileNameRecent))                                // Get the RECENT json that is in .zip format
         .then(() => extractZipFile(config.zipFileNameRecent))
         .then(() => {
             let NVDJSON = fs.readFileSync(config.NVDJSONFileNameRecent, 'utf-8');
