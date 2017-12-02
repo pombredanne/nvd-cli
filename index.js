@@ -24,6 +24,7 @@ TODO: allow for a -r (recent) or -f (full-check) arg
 TODO: create a CLI search functionality
 TODO: fix the weird promise chain thing and chunk functions out
 TODO: when done, work on README
+TODO: get the CVE ID
 */
 
 // script starts here
@@ -43,7 +44,7 @@ Promise.resolve()                                               // start the pro
     .then(() => {
         // unzip the JSON and write to file, looks like this module only allows cwd extracts
         return extract('test.zip', { dir: process.cwd() }, function (err) {
-            return console.log(err);                                               // extraction is complete,  make sure to handle the err 
+            if (err) { return console.log(err); }                                              // extraction is complete,  make sure to handle the err 
         });
     })
     .then(() => {
@@ -65,23 +66,34 @@ Promise.resolve()                                               // start the pro
                 swChecklist.forEach((item, itemIndex) => {
                     if (entryV.vendor_name.toLowerCase() == item.manufacturerName.toLowerCase()) {
                         entryV.product.product_data.forEach((product, productIndex) => {
-                            if (product.productname == item.softwareName.toLowerCase()) {
+                            if (product.product_name == item.softwareName.toLowerCase()) {
+                                console.log(entry)
                                 var versionsAffected = [];
                                 entryV.product.product_data[0].version.version_data.forEach((version) => {
                                     versionsAffected.push(version.version_value);
                                 });
                                 // push all of the data to an the affectedItem Obj
+                                affectedItem.ID = entry.cve.CVE_data_meta.ID;
                                 affectedItem.vendorName = entryV.vendor_name;
                                 affectedItem.productName = entryV.product.product_data[0].product_name;
                                 affectedItem.publishedDate = entry.publishedDate;
                                 affectedItem.lastModifiedDate = entry.lastModifiedDate;
-                                affectedItem.vulnerabilityDescription = entry.cve.description.description_data[0].value
+                                affectedItem.vulnerabilityDescription = entry.cve.description.description_data[0].value;
                                 affectedItem.versionsAffected = versionsAffected;
-                                affectedItem.attackVector = entry.impact.baseMetricV3.cvssV3.attackVector
-                                affectedItem.v3SeverityScore = {
-                                    severity: entry.impact.baseMetricV3.cvssV3.baseSeverity,
-                                    scoreString: entry.impact.baseMetricV3.cvssV3.baseScore
+                                // validate that v3 exists
+                                if (entry.impact.hasOwnProperty('baseMetricV3')) {
+                                    affectedItem.v3SeverityScore = {
+                                        severity: entry.impact.baseMetricV3.cvssV3.baseSeverity,
+                                        scoreString: entry.impact.baseMetricV3.cvssV3.baseScore
+                                    }
+                                    affectedItem.attackVector = entry.impact.baseMetricV3.cvssV3.attackVector;
+                                } else {
+                                    affectedItem.v3SeverityScore = {
+                                        severity: 'NONE',
+                                        scoreString: 'NONE'
+                                    }
                                 }
+                                // Do the same for v2
                                 affectedItem.v2SeverityScore = {
                                     severity: entry.impact.baseMetricV2.severity,
                                     scoreString: entry.impact.baseMetricV2.cvssV2.baseScore
@@ -117,7 +129,7 @@ Promise.resolve()                                               // start the pro
         // get each affected item's data and format it
         affectedItemsArray.forEach((entry, index) => {
             console.log(entry);
-            doc.text(`\n${capitalizeFirstLetter(entry.vendorName)} ${capitalizeFirstLetter(entry.productName)}:`, { stroke: true });
+            doc.text(`\n${capitalizeFirstLetter(entry.vendorName)} ${capitalizeFirstLetter(entry.productName)} (${entry.ID})`, { stroke: true });
             doc.text(`Versions Affected: ${entry.versionsAffected.join(', ')}`);
             doc.text(`Attack Vector: ${entry.attackVector}`);
             doc.text(`\nDescription: ${entry.vulnerabilityDescription}`);
@@ -134,7 +146,7 @@ Promise.resolve()                                               // start the pro
         console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
     })
     .catch((err) => {
-        console.log(`Ended with error at ${new Date().toISOString()}:${err}`);
+        console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
     });
 
 
