@@ -25,7 +25,6 @@ TODO: create a CLI search functionality
 TODO: when done, work on README
 TODO: add filename and type arg handlers
 TODO: flesh out the --full arg further to allow for specific years to be passed
-TODO: get URL references Data
 */
 
 function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
@@ -181,6 +180,12 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
             console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
         })
 } else if (process.argv[2] == '-f' || process.argv[2] == '--full') {
+    // check for a year arg as well, allow for up to 10 years ago
+    if(process.argv[3]) {
+        var yearArg = process.argv[3]
+    } else {
+        var yearArg = '2017'
+    }
     console.log(`Getting NVD FULL data to compare against ${config.checklistName}`);
     Promise.resolve()                                               // start the promise chain as resolved to avoid issues
         .then(() => getNVDZipFile(config.NVDURLFull2017, config.zipFileNameFUll2017))      // Get the FULL json that is in .zip format
