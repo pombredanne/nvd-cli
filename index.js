@@ -8,6 +8,7 @@ const exec = require('child-process-promise').exec;
 const config = require('./config');                             // confiog file for script
 const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 var globalNVDJSON;
+var defaultArg = '-r';
 /*
 simple script to get recent NVD JSON data from their CDN in a zip format
 unzip it and check against a set of manufacturers & software products to track vulnerabilites
@@ -59,7 +60,6 @@ function parseNVDData(NVDObjArray) {
                 if (entryV.vendor_name.toLowerCase() == item.manufacturerName.toLowerCase()) {
                     entryV.product.product_data.forEach((product, productIndex) => {
                         if (product.product_name == item.softwareName.toLowerCase()) {
-                            console.log(entry)
                             var versionsAffected = [];
                             entryV.product.product_data[0].version.version_data.forEach((version) => {
                                 versionsAffected.push(version.version_value);
@@ -105,6 +105,7 @@ function parseNVDData(NVDObjArray) {
             });
         });
     });
+    console.log(`Number of mathces found: ${affectedItems.length}`);
     return affectedItems;
 }
 
@@ -126,7 +127,6 @@ function writePDFReport(affectedItemsArray) {
     doc.moveDown();
     // get each affected item's data and format it
     affectedItemsArray.forEach((entry, index) => {
-        console.log(entry);
         doc.text(`\n${capitalizeFirstLetter(entry.vendorName)} ${capitalizeFirstLetter(entry.productName)} (${entry.ID})`, { stroke: true });
         doc.text(`Versions Affected: ${entry.versionsAffected.join(', ')}`);
         doc.text(`Attack Vector: ${entry.attackVector}`);
@@ -142,21 +142,27 @@ function writePDFReport(affectedItemsArray) {
 
 // script starts here
 // args will eventually be processed here
-console.log(`\nNVD RECENT Vulnerability Script Started on ${new Date().toISOString()}\n`);
-Promise.resolve()                                               // start the promise chain as resolved to avoid issues
-    .then(() => getNVDZipFile())                                // Get the RECENT json that is in .zip format
-    .then(() => extractZipFile(config.zipFileName))
-    .then(() => {
-        let NVDJSON = fs.readFileSync(config.NVDJSONFileName, 'utf-8');
-        let parsedNVDData = JSON.parse(NVDJSON);
-        globalNVDJSON = parsedNVDData;                              // used to allow the PDF file acess to certain data
-        return parsedNVDData;
-    })
-    .then((NVDData) => parseNVDData(NVDData))
-    .then((affectedItemsArray) => writePDFReport(affectedItemsArray))
-    .then(() => {
-        console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
-    })
-    .catch((err) => {
-        console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
-    })
+console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`);
+if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
+    Promise.resolve()                                               // start the promise chain as resolved to avoid issues
+        .then(() => getNVDZipFile())                                // Get the RECENT json that is in .zip format
+        .then(() => extractZipFile(config.zipFileName))
+        .then(() => {
+            let NVDJSON = fs.readFileSync(config.NVDJSONFileName, 'utf-8');
+            let parsedNVDData = JSON.parse(NVDJSON);
+            globalNVDJSON = parsedNVDData;                              // used to allow the PDF file acess to certain data
+            return parsedNVDData;
+        })
+        .then((NVDData) => parseNVDData(NVDData))
+        .then((affectedItemsArray) => writePDFReport(affectedItemsArray))
+        .then(() => {
+            console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
+        })
+        .catch((err) => {
+            console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
+        })
+} else if (process.argv[2] == '-f') {
+console.log('AAAAAAA')
+} else {
+    //display help file
+}
