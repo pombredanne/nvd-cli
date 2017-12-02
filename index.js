@@ -13,7 +13,9 @@ var globalNVDJSON;
 simple script to get recent NVD JSON data from their CDN in a zip format
 unzip it and check against a set of manufacturers & software products to track vulnerabilites
 
-Notes: the PDF way to get bold text is 'stroke' not bold
+Notes: 
+- the PDFkit way to get bold text is 'stroke' not bold
+- for PDFKit, doc.moveDown and \n being in the string do the same thing
 
 TODO: Allow for vulerability severity configuration based on the config.js file
 TODO: allow argument flag for getting RECENT or ALL year 20XX vulnerabilities
@@ -22,10 +24,8 @@ TODO: allow for a -r (recent) or -f (full-check) arg
 TODO: create a CLI search functionality
 TODO: when done, work on README
 TODO: add filename and type arg handlers
-TODO: use the meta tags for the CVE data eventually
 TODO: flesh out the --full arg further to allow for specific years to be passed
-TODO: fix the issue where the first time something is abtracted, the promise chain tries to read
-it too quickly
+TODO: get URL references Data
 */
 
 function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
@@ -44,6 +44,7 @@ function getNVDZipFile(url, fileLocation) {
     });
 }
 
+// this is a hacky solution.
 function extractZipFile(fileNameToExtract) {
     return new Promise((resolve, reject) => {
         return extract(fileNameToExtract, { dir: process.cwd() }, function (err) {
@@ -65,10 +66,17 @@ function parseNVDData(NVDObjArray) {
                 if (entryV.vendor_name.toLowerCase() == item.manufacturerName.toLowerCase()) {
                     entryV.product.product_data.forEach((product, productIndex) => {
                         if (product.product_name == item.softwareName.toLowerCase()) {
+                            if (debug) { console.log(entry); }
                             var versionsAffected = [];
+                            var referenceURLs = [];
                             entryV.product.product_data[0].version.version_data.forEach((version) => {
                                 versionsAffected.push(version.version_value);
                             });
+                            if (entry.cve.hasOwnProperty('references')) {
+                                entry.cve.references.reference_data.forEach((ref, refIndex) => {
+                                    referenceURLs.push(ref.url);
+                                });
+                            }
                             // push all of the data to an the affectedItem Obj
                             affectedItem.ID = entry.cve.CVE_data_meta.ID;
                             affectedItem.vendorName = entryV.vendor_name;
@@ -77,6 +85,7 @@ function parseNVDData(NVDObjArray) {
                             affectedItem.lastModifiedDate = entry.lastModifiedDate;
                             affectedItem.vulnerabilityDescription = entry.cve.description.description_data[0].value;
                             affectedItem.versionsAffected = versionsAffected;
+                            affectedItem.referenceURLs = referenceURLs
                             // validate that v3 exists
                             if (entry.impact.hasOwnProperty('baseMetricV3')) {
                                 affectedItem.v3SeverityScore = {
@@ -114,39 +123,43 @@ function parseNVDData(NVDObjArray) {
     return affectedItems;
 }
 
-function writePDFReport(affectedItemsArray) {
+function writePDFReport(affectedItemsArray, timeArg) {
     var doc = new PDFDocument;
     doc.pipe(fs.createWriteStream('output.pdf'));
     doc.fontSize(16);
     doc.font(config.defaultFontLocation);
-    doc.text(`NVD RECENT Vulnerability Check Report ${new Date().toDateString()}`, { align: 'center', stroke: true });
+    doc.text(`NVD ${timeArg} Vulnerability Check Report ${new Date().toDateString()}`, { align: 'center', stroke: true });
     doc.fontSize(12);
     doc.moveDown();
     doc.moveDown();
     doc.text(`CVE data version: ${globalNVDJSON.CVE_data_version}`);
     doc.text(`CVE count: ${globalNVDJSON.CVE_data_numberOfCVEs}`);
     doc.text(`Last Updated: ${globalNVDJSON.CVE_data_timestamp}`);
-    doc.moveDown();
+    doc.text(`Checklist File: ${config.checklistName}`);
+    doc.text(`Number of Vulnerabilites Matched: ${affectedItemsArray.length}`);
     doc.fontSize(14);
-    doc.text(`RECENT vulnerabilites matched using config file: ${config.checklistName}`, { align: 'center' });
     doc.moveDown();
     // get each affected item's data and format it
     affectedItemsArray.forEach((entry, index) => {
         doc.text(`\n${capitalizeFirstLetter(entry.vendorName)} ${capitalizeFirstLetter(entry.productName)} (${entry.ID})`, { stroke: true });
+        doc.text(`Published: ${entry.publishedDate}    Modified: ${entry.lastModifiedDate}`);
         doc.text(`Versions Affected: ${entry.versionsAffected.join(', ')}`);
         doc.text(`Attack Vector: ${entry.attackVector}`);
         doc.text(`\nDescription: ${entry.vulnerabilityDescription}`);
         doc.text(`\nV3 Score: ${entry.v3SeverityScore.severity} (${entry.v3SeverityScore.scoreString})`);
         doc.text(`V2 Score: ${entry.v2SeverityScore.severity} (${entry.v2SeverityScore.scoreString})`);
-        doc.text(`\nPublished: ${entry.publishedDate}    Modified: ${entry.lastModifiedDate}`)
+        doc.text(`\nReferences:`);
+        doc.fillColor('blue');                                      // color ref URLs blue
+        doc.text(`${entry.referenceURLs.join('\n')}`);
+        doc.fillColor('black');                                     // reset the color
+        doc.moveDown();                                             // Allow for some whitespace in between entries
     });
     doc.text('\n\nEnd of File');
     doc.end();
 
 }
 
-// script starts here
-// args are processed before anything is done
+// script starts here, args are processed before anything is done
 if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
 if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
     console.log(`Getting NVD recent data to compare against ${config.checklistName}`);
@@ -160,7 +173,7 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
             return parsedNVDData;
         })
         .then((NVDData) => parseNVDData(NVDData))
-        .then((affectedItemsArray) => writePDFReport(affectedItemsArray))
+        .then((affectedItemsArray) => writePDFReport(affectedItemsArray, 'RECENT'))
         .then(() => {
             if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
         })
@@ -179,7 +192,7 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
             return parsedNVDData;
         })
         .then((NVDData) => parseNVDData(NVDData))
-        .then((affectedItemsArray) => writePDFReport(affectedItemsArray))
+        .then((affectedItemsArray) => writePDFReport(affectedItemsArray, '2017'))
         .then(() => {
             if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
         })
@@ -187,7 +200,6 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
             console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
         })
 } else {
-    //display help file
-    // placeholder
+    //display help file here
     console.log('Help:');
 }
