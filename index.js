@@ -15,14 +15,11 @@ unzip it and check against a set of manufacturers & software products to track v
 Notes: the PDF way to get bold text is 'stroke' not bold
 
 TODO: Allow for vulerability severity configuration based on the config.js file
-TODO: get the XML too eventually to allow for both URLs to be used?
-TODO: better format the data
 TODO: allow argument flag for getting RECENT or ALL year 20XX vulnerabilities
 TODO: figure out what the hell this was intended to do with the data
 TODO: Do something with the date on NVD entries
 TODO: allow for a -r (recent) or -f (full-check) arg
 TODO: create a CLI search functionality
-TODO: fix the weird promise chain thing and chunk functions out
 TODO: when done, work on README
 */
 
@@ -153,16 +150,13 @@ Promise.resolve()                                               // start the pro
     .then(() => getNVDZipFile())                                // Get the RECENT json that is in .zip format
     .then(() => extractZipFile(config.zipFileName))
     .then(() => {
-        // read file contents to memory
         let NVDJSON = fs.readFileSync(config.NVDJSONFileName, 'utf-8');
         let parsedNVDData = JSON.parse(NVDJSON);
         globalNVDJSON = parsedNVDData;                              // used to allow the PDF file acess to certain data
         return parsedNVDData;
     })
     .then((NVDData) => parseNVDData(NVDData))
-    .then((affectedItemsArray) => {
-        writePDFReport(affectedItemsArray)
-    })
+    .then((affectedItemsArray) => writePDFReport(affectedItemsArray))
     .then(() => {
         console.log(`\nSuccessfully ended on ${new Date().toISOString()}`);
     })
