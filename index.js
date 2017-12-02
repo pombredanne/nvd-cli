@@ -24,22 +24,13 @@ TODO: allow for a -r (recent) or -f (full-check) arg
 TODO: create a CLI search functionality
 TODO: fix the weird promise chain thing and chunk functions out
 TODO: when done, work on README
-TODO: get the CVE ID
 */
 
 // script starts here
 console.log(`\nNVD RECENT Vulnerability Script Started on ${new Date().toISOString()}\n`);
 Promise.resolve()                                               // start the promise chain as resolved to avoid issues
     .then(() => {                                               // Get the RECENT json that is in .zip format
-        return new Promise((resolve, reject) => {
-            exec(`curl "${config.NVDURL}" > test.zip`)
-                .then(function (result) {
-                    var stdout = result.stdout;
-                    var stderr = result.stderr;
-                    console.log('stderr: ', stderr);            // debugging
-                    return resolve(stdout);
-                });
-        });
+        return getNVDZipFile();
     })
     .then(() => {
         // unzip the JSON and write to file, looks like this module only allows cwd extracts
@@ -94,15 +85,21 @@ Promise.resolve()                                               // start the pro
                                     }
                                 }
                                 // Do the same for v2
-                                affectedItem.v2SeverityScore = {
-                                    severity: entry.impact.baseMetricV2.severity,
-                                    scoreString: entry.impact.baseMetricV2.cvssV2.baseScore
+                                if (entry.impact.hasOwnProperty('baseMetricV2')) {
+                                    affectedItem.v2SeverityScore = {
+                                        severity: entry.impact.baseMetricV2.severity,
+                                        scoreString: entry.impact.baseMetricV2.cvssV2.baseScore
+                                    }
+                                } else {
+                                    affectedItem.v2SeverityScore = {
+                                        severity: 'NONE',
+                                        scoreString: 'NONE'
+                                    }
                                 }
-                                // push the affected item to the array
+                                // push the affected item to the array to return
                                 affectedItems.push(affectedItem);
                             }
-                        })
-
+                        });
                     }
                 });
             });
@@ -152,4 +149,16 @@ Promise.resolve()                                               // start the pro
 
 function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function getNVDZipFile() {
+    return new Promise((resolve, reject) => {
+        exec(`curl "${config.NVDURL}" > test.zip`)
+            .then(function (result) {
+                var stdout = result.stdout;
+                var stderr = result.stderr;
+                console.log('stderr: ', stderr);            // debugging
+                return resolve(stdout);
+            });
+    });
 }
