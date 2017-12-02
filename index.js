@@ -45,16 +45,11 @@ function getNVDZipFile(url, fileLocation) {
 }
 
 function extractZipFile(fileNameToExtract) {
-    var promiseTail = Promise.resolve();
-    promiseTail = promiseTail.then(() => {
+    return new Promise((resolve, reject) => {
         return extract(fileNameToExtract, { dir: process.cwd() }, function (err) {
-            if (err) { return console.log(err); }
+            return resolve(err);
         });
-    })
-        .then(() => {
-            if (debug) { console.log('Extract complete!'); }
-        })
-    return promiseTail;
+    });
 }
 
 function parseNVDData(NVDObjArray) {
