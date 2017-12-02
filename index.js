@@ -24,15 +24,16 @@ TODO: create a CLI search functionality
 TODO: when done, work on README
 TODO: add filename and type arg handlers
 TODO: use the meta tags for the CVE data eventually
+TODO: flesh out the --full arg further to allow for specific years to be passed
 */
 
 function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function getNVDZipFile(fileLocation) {
+function getNVDZipFile(url, fileLocation) {
     return new Promise((resolve, reject) => {
-        exec(`curl "${config.NVDURLRecent}" > ${fileLocation}`)
+        exec(`curl "${url}" > ${fileLocation}`)
             .then(function (result) {
                 var stdout = result.stdout;
                 var stderr = result.stderr;
@@ -148,10 +149,29 @@ if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date
 if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
     console.log(`Getting NVD recent data to compare against ${config.checklistName}`);
     Promise.resolve()                                               // start the promise chain as resolved to avoid issues
-        .then(() => getNVDZipFile(config.zipFileNameRecent))                                // Get the RECENT json that is in .zip format
+        .then(() => getNVDZipFile(config.NVDURLRecent, config.zipFileNameRecent))        // Get the RECENT json that is in .zip format
         .then(() => extractZipFile(config.zipFileNameRecent))
         .then(() => {
             let NVDJSON = fs.readFileSync(config.NVDJSONFileNameRecent, 'utf-8');
+            let parsedNVDData = JSON.parse(NVDJSON);
+            globalNVDJSON = parsedNVDData;                          // used to allow the PDF file acess to certain data
+            return parsedNVDData;
+        })
+        .then((NVDData) => parseNVDData(NVDData))
+        .then((affectedItemsArray) => writePDFReport(affectedItemsArray))
+        .then(() => {
+            if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
+        })
+        .catch((err) => {
+            console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
+        })
+} else if (process.argv[2] == '-f' || process.argv[2] == '--full') {
+    console.log(`Getting NVD FULL data to compare against ${config.checklistName}`);
+    Promise.resolve()                                               // start the promise chain as resolved to avoid issues
+        .then(() => getNVDZipFile(config.NVDURLFull2017, config.zipFileNameFUll2017))      // Get the FULL json that is in .zip format
+        .then(() => extractZipFile(config.zipFileNameFUll2017))
+        .then(() => {
+            let NVDJSON = fs.readFileSync(config.NVDJSONFileNameFull2017, 'utf-8');
             let parsedNVDData = JSON.parse(NVDJSON);
             globalNVDJSON = parsedNVDData;                              // used to allow the PDF file acess to certain data
             return parsedNVDData;
@@ -164,8 +184,6 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
         .catch((err) => {
             console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
         })
-} else if (process.argv[2] == '-f') {
-    console.log('AAAAAAA')
 } else {
     //display help file
     // placeholder
