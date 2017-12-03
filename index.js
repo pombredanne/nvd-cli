@@ -12,6 +12,7 @@ const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 const bright = '\x1b[1m';
 const reset = '\x1b[0m';
 const debug = config.debug;
+const ver = '0.1.2';                                            // arbitrary version number, should match NPM version
 
 var globalNVDJSON;
 /*
@@ -22,7 +23,7 @@ Notes:
 - the PDFkit way to get bold text is 'stroke' not bold
 - for PDFKit, doc.moveDown and \n being in the string do the same thing
 
-TODO: Allow for vulerability severity configuration based on the config.js file
+TODO: Allow for vulerability severity arg (IE Ignore 'LOW' scoring entries that match)
 TODO: create a CLI search functionality (search for a product vulnerability or vendor list)
 TODO: when done, work on README
 TODO: add filename handler for the PDF/TXT and the type of file to generate
@@ -30,6 +31,8 @@ TODO: update project scope description
 TODO: for recents, ensure that the CVE review is FINAL?
 TODO: add params for every function that needs them
 TODO: fix the global JSON data issue that really shouldn't be there
+TODO: allow for a checklist file arg to be passed
+TODO figure out a better name for this project
 */
 
 function capitalizeFirstLetter(string) {                            //used to clean up some WF data 
@@ -186,6 +189,15 @@ function NVDCheckFull(yearToSearch) {
         })
 }
 
+function helpInfo() {
+    console.log('About: \nThis script is designed to help you get information from the\nNVD and/or generate a report based on a checklist file');
+    console.log('\n\nUsage: nvd-cli <command> OR nvd-cli -arg');
+    console.log(`\nnvd-cli -r OR --recent\t\tGenerate a report based on a checklist 
+                                file for RECENT vulnerabilities that match the checklist`);
+    console.log(`\nnvd-cli -f <year> OR --full <year> Generate a report based on a checklist file for 
+                                vulnerabilities found in the <year> arg passed`)
+}
+
 // script starts here, args are processed before anything is done
 if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
 if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
@@ -227,7 +239,9 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
         return NVDCheckFull(yearArg);
     }
 
+} else if (process.argv[2] == '-h' || process.argv[2] == '--help' || process.argv[2] == 'help') {
+    return helpInfo();
 } else {
-    // display help file here!!
-    console.log('Help:');
+    // Display help information since nothing was passed
+    return helpInfo();
 }
