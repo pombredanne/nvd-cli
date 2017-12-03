@@ -138,9 +138,9 @@ function parseNVDData(NVDObjArray) {
     return affectedItems;
 }
 
-function writePDFReport(affectedItemsArray, timeArg) {
+function writePDFReport(affectedItemsArray, timeArg, outputArg) {
     var doc = new PDFDocument;
-    doc.pipe(fs.createWriteStream('output.pdf'));
+    doc.pipe(fs.createWriteStream(`${outputArg}.pdf`));
     doc.fontSize(16);
     doc.font(config.defaultFontLocation);
     doc.text(`NVD ${timeArg} Vulnerability Check Report ${new Date().toDateString()}`, { align: 'center', stroke: true });
@@ -171,7 +171,7 @@ function writePDFReport(affectedItemsArray, timeArg) {
     });
     doc.text('\n\nEnd of File');
     doc.end();
-    console.log(`Wrote report as 'output.pdf'`);
+    console.log(`Wrote report as ${outputArg}.pdf`);
 }
 
 function NVDCheckFull(yearToSearch) {
@@ -197,7 +197,7 @@ function NVDCheckFull(yearToSearch) {
         })
 }
 
-function NVDCheckRecent(outputLocation, outputFormat, checklistLocation) {
+function NVDCheckRecent(outputLocation, outputFormat, checklistLocation, outputName) {
     console.log(`Getting NVD recent data to compare against ${config.checklistName}`);
     Promise.resolve()                                               // start the promise chain as resolved to avoid issues
         .then(() => getNVDZipFile(config.NVDURLRecent, config.zipFileNameRecent))        // Get the RECENT json that is in .zip format
@@ -209,7 +209,15 @@ function NVDCheckRecent(outputLocation, outputFormat, checklistLocation) {
             return parsedNVDData;
         })
         .then((NVDData) => parseNVDData(NVDData))
-        .then((affectedItemsArray) => writePDFReport(affectedItemsArray, 'RECENT'))
+        .then((affectedItemsArray) => {
+            if (outputFormat == '.pdf') {
+                writePDFReport(affectedItemsArray, 'RECENT', outputName);
+            } else if (outputFormat == '.txt') {
+                console.log('.txt output not yet supported');
+            } else {
+                throw new Error('No output format was passed to function NVDCheckRecent');
+            }
+        })
         .then(() => {
             if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
         })
@@ -243,7 +251,7 @@ function main() {
     if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
     // if argv has help arg, return help, if help <command> is passed, return better helpmsg
     if (argv.h || argv.help || argv._.indexOf('help') !== -1) {
-        return helpInfo();
+        return helpInfo(defaultOutputLocation, defaultOutputName);
     }
     if (argv.c || argv.checklist) {
         // check for a checklist valid file path
@@ -266,9 +274,12 @@ function main() {
             defaultOutputName = argv.output;
         }
     }
-
+    if (argv.o && argv.output) {
+        console.log('Please only use -o or --output, not both!')
+    }
+    // recent needs no extra arg checking
     if (argv.r || argv.recent || argv._.indexOf('recent') !== -1) {
-        return NVDCheckRecent();
+        return NVDCheckRecent(defaultOutputLocation, '.pdf', config.checklistName, defaultOutputName);
     }
 
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
