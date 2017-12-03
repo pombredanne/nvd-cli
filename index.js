@@ -32,6 +32,7 @@ TODO: flesh out the --full arg further to allow for specific years to be passed
 TODO: update project scope description
 TODO: for recents, ensure that the CVE review is FINAL?
 TODO: add params for every function that needs them
+TODO: fix the global JSON data issue that really shouldn't be there
 */
 
 function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
@@ -165,7 +166,30 @@ function writePDFReport(affectedItemsArray, timeArg) {
 
 }
 
-function NVDCheckFull(yearToSearch)
+function NVDCheckFull(yearToSearch) {
+    // yearToSearch should already be validated
+
+    // generate the new NVDData to work with
+    let NVDFileData = new NVDClass(yearToSearch);
+    console.log(`Getting NVD FULL data to compare against ${config.checklistName}`);
+    return Promise.resolve()                                               // start the promise chain as resolved to avoid issues
+        .then(() => getNVDZipFile(NVDFileData.NVDURL, NVDFileData.zipFileLocation))      // Get the FULL json that is in .zip format
+        .then(() => extractZipFile(NVDFileData.zipFileLocation))
+        .then(() => {
+            let NVDJSON = fs.readFileSync(NVDFileData.NVDJSONFileName, 'utf-8');
+            let parsedNVDData = JSON.parse(NVDJSON);
+            globalNVDJSON = parsedNVDData;                              // used to allow the PDF file acess to certain data
+            return parsedNVDData;
+        })
+        .then((NVDData) => parseNVDData(NVDData))
+        .then((affectedItemsArray) => writePDFReport(affectedItemsArray, yearToSearch))
+        .then(() => {
+            if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
+        })
+        .catch((err) => {
+            console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
+        })
+}
 
 // script starts here, args are processed before anything is done
 if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
@@ -196,33 +220,18 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
         // verify the arg is a valid year (catch a lot of exceptions)
         if (isNaN(yearArg) || yearArg.charAt(0) !== '2' || yearArg.charAt(1) !== '0' || yearArg.length < 4 || yearArg.length > 4) {
             console.log(bright, `\n${yearArg} is not a valid year, the year arg should look something like this: 2017`);
+            console.log('\nExiting...');
             console.log(reset, '');                                      // Reset the console color
+            process.exit(0);
         } else {
-            let NVDTest = new NVDClass(yearArg);
-            console.log(NVDTest);
+            return NVDCheckFull(yearArg);
         }
     } else {
         console.log(bright, `\nNo year argument for full search, default is ${yearArg}`);
         console.log(reset, '');                                      // Reset the console color
+        return NVDCheckFull(yearArg);
     }
-    console.log(`Getting NVD FULL data to compare against ${config.checklistName}`);
-    Promise.resolve()                                               // start the promise chain as resolved to avoid issues
-        .then(() => getNVDZipFile(config.NVDURLFull2017, config.zipFileNameFUll2017))      // Get the FULL json that is in .zip format
-        .then(() => extractZipFile(config.zipFileNameFUll2017))
-        .then(() => {
-            let NVDJSON = fs.readFileSync(config.NVDJSONFileNameFull2017, 'utf-8');
-            let parsedNVDData = JSON.parse(NVDJSON);
-            globalNVDJSON = parsedNVDData;                              // used to allow the PDF file acess to certain data
-            return parsedNVDData;
-        })
-        .then((NVDData) => parseNVDData(NVDData))
-        .then((affectedItemsArray) => writePDFReport(affectedItemsArray, '2017'))
-        .then(() => {
-            if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
-        })
-        .catch((err) => {
-            console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
-        })
+
 } else {
     //display help file here
     console.log('Help:');
