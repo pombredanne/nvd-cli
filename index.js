@@ -27,6 +27,7 @@ TODO: when done, work on README
 TODO: add filename and type arg handlers
 TODO: flesh out the --full arg further to allow for specific years to be passed
 TODO: update project scope
+TODO: for recents, ensure that the CVE review is FINAL?
 */
 
 function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
@@ -186,8 +187,8 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
     var yearArg = '2017';
     if (process.argv[3]) {
         yearArg = process.argv[3];
-        // verify the arg is a valid year
-        if (isNaN(yearArg) || yearArg.charAt(0) !== '2') {
+        // verify the arg is a valid year (catch a lot of exceptions)
+        if (isNaN(yearArg) || yearArg.charAt(0) !== '2' || yearArg.charAt(1) !== '0' || yearArg.length < 4 || yearArg.length > 4) {
             console.log(bright, `\n${yearArg} is not a valid year, the year arg should look something like this: 2017`);
             console.log(reset, '');                                      // Reset the console color
         } else {
