@@ -197,6 +197,27 @@ function NVDCheckFull(yearToSearch) {
         })
 }
 
+function NVDCheckRecent(outputLocation, outputFormat, checklistLocation) {
+    console.log(`Getting NVD recent data to compare against ${config.checklistName}`);
+    Promise.resolve()                                               // start the promise chain as resolved to avoid issues
+        .then(() => getNVDZipFile(config.NVDURLRecent, config.zipFileNameRecent))        // Get the RECENT json that is in .zip format
+        .then(() => extractZipFile(config.zipFileNameRecent))
+        .then(() => {
+            let NVDJSON = fs.readFileSync(config.NVDJSONFileNameRecent, 'utf-8');
+            let parsedNVDData = JSON.parse(NVDJSON);
+            globalNVDJSON = parsedNVDData;                          // used to allow the PDF file acess to certain data
+            return parsedNVDData;
+        })
+        .then((NVDData) => parseNVDData(NVDData))
+        .then((affectedItemsArray) => writePDFReport(affectedItemsArray, 'RECENT'))
+        .then(() => {
+            if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
+        })
+        .catch((err) => {
+            console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
+        })
+}
+
 function helpInfo() {
     // NOTE: this list is incomplete
     console.log('About: \nThis script is designed to help you get information from the\nNVD and/or generate a report based on a checklist file');
@@ -223,16 +244,36 @@ function main() {
     // if argv has help arg, return help, if help <command> is passed, return better helpmsg
     if (argv.h || argv.help || argv._.indexOf('help') !== -1) {
         return helpInfo();
-    } else if (argv.c || argv.checklist) {
+    }
+    if (argv.c || argv.checklist) {
         // check for a checklist valid file path
-    } else if (argv.o || argv.output) {
+    }
+
+    //TODO: clean the file name output renames to not have invalid chars
+    if (argv.o) {
         // change the output name
         // validate the arg first
-        if(argv.o == null || argv.output == null) {
-            console.log('INVALID')
+        if (typeof (argv.o) !== 'string') {
+            console.log('Please provide a string for the output file name');
+        } else {
+            defaultOutputName = argv.o;
         }
     }
-    // if arg -o, allow for output rename to be handled
+    if (argv.output) {
+        if (typeof (argv.o) !== 'string') {
+            console.log('Please provide a string for the output file name');
+        } else {
+            defaultOutputName = argv.output;
+        }
+    }
+
+    if (argv.r || argv.recent || argv._.indexOf('recent') !== -1) {
+        return NVDCheckRecent();
+    }
+
+    if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
+        console.log('Please provide a task arg (-r, --recent, -f --full, -s --search');
+    }
     // if arg is -r, get recent data
     // if arg is -f, get FULL data for a year that was passed
     // if arg is -s, search for a the string in the year arg passed
@@ -244,26 +285,7 @@ function main() {
 
 main();
 if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
-if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
-    console.log(`Getting NVD recent data to compare against ${config.checklistName}`);
-    Promise.resolve()                                               // start the promise chain as resolved to avoid issues
-        .then(() => getNVDZipFile(config.NVDURLRecent, config.zipFileNameRecent))        // Get the RECENT json that is in .zip format
-        .then(() => extractZipFile(config.zipFileNameRecent))
-        .then(() => {
-            let NVDJSON = fs.readFileSync(config.NVDJSONFileNameRecent, 'utf-8');
-            let parsedNVDData = JSON.parse(NVDJSON);
-            globalNVDJSON = parsedNVDData;                          // used to allow the PDF file acess to certain data
-            return parsedNVDData;
-        })
-        .then((NVDData) => parseNVDData(NVDData))
-        .then((affectedItemsArray) => writePDFReport(affectedItemsArray, 'RECENT'))
-        .then(() => {
-            if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
-        })
-        .catch((err) => {
-            console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
-        })
-} else if (process.argv[2] == '-f' || process.argv[2] == '--full') {
+else if (process.argv[2] == '-f' || process.argv[2] == '--full') {
     // check for a year arg as well, allow for up to 10 years ago
     var yearArg = '2017';
     if (process.argv[3]) {
@@ -285,5 +307,5 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
 } else if (argv.h || process.argv[2] == '--help' || process.argv[2] == 'help') {
     return helpInfo();
 } else {
-    return helpInfo();                                              // Display help information since nothing was passed
+    // return helpInfo();                                              // Display help information since nothing was passed
 }
