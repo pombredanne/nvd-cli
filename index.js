@@ -4,6 +4,8 @@ var extract = require('extract-zip');
 const util = require('util');                                   // for using child-process
 const PDFDocument = require('pdfkit');
 const exec = require('child-process-promise').exec;
+var argv = require('minimist')(process.argv.slice(2));          // for parsing args
+console.log(argv);
 // custom requires
 const config = require('./config');                             // confiog file for script
 const NVDClass = require('./lib/NVDJSONClass');                 // helper for getting at NVD Data for specific years
@@ -12,7 +14,7 @@ const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 const bright = '\x1b[1m';
 const reset = '\x1b[0m';
 const debug = config.debug;
-const ver = '0.1.2';                                            // arbitrary version number, should match NPM version
+const ver = '0.2.0';                                            // arbitrary version number, should match NPM version
 
 var globalNVDJSON;
 /*
@@ -32,7 +34,9 @@ TODO: for recents, ensure that the CVE review is FINAL?
 TODO: add params for every function that needs them
 TODO: fix the global JSON data issue that really shouldn't be there
 TODO: allow for a checklist file arg to be passed
-TODO figure out a better name for this project
+TODO: allow for output location
+TODO: make this usable as an NPM command line util? (kind of like node-mailer CLI)
+TODO: create a more sacalable arg system
 */
 
 function capitalizeFirstLetter(string) {                            //used to clean up some WF data 
@@ -163,7 +167,7 @@ function writePDFReport(affectedItemsArray, timeArg) {
     });
     doc.text('\n\nEnd of File');
     doc.end();
-
+    console.log(`Wrote report as 'output.pdf'`);
 }
 
 function NVDCheckFull(yearToSearch) {
@@ -197,6 +201,15 @@ function helpInfo() {
                                         vulnerabilities that match the checklist`);
     console.log(`\nnvd-cli -f <year> OR --full <year>\tGenerate a report based on a checklist file for 
                                         vulnerabilities found in the <year> arg passed`);
+}
+
+function handleOutPutArg() {
+
+}
+
+// script will eventually start here
+function main() {
+    if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
 
 }
 
@@ -240,7 +253,7 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
         console.log(reset, '');                                      // Reset the console color
         return NVDCheckFull(yearArg);
     }
-} else if (process.argv[2] == '-h' || process.argv[2] == '--help' || process.argv[2] == 'help') {
+} else if (argv.h || process.argv[2] == '--help' || process.argv[2] == 'help') {
     return helpInfo();
 } else {
     return helpInfo();                                              // Display help information since nothing was passed
