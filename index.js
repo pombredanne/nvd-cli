@@ -16,6 +16,9 @@ const reset = '\x1b[0m';
 const debug = config.debug;
 const ver = '0.2.0';                                            // arbitrary version number, should match NPM version
 
+// vars to hold arg values and their defaults
+var outputLocation = process.cwd();
+
 var globalNVDJSON;
 /*
 simple script to get recent NVD JSON data from their CDN in a zip format
@@ -210,6 +213,12 @@ function handleOutPutArg() {
 // script will eventually start here
 function main() {
     if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
+    // if argv has help arg, return help, if help <command> is passed, return better helpmsg
+    // if arg -o, allow for output rename to be handled
+    // if arg is -r, get recent data
+    // if arg is -f, get FULL data for a year that was passed
+    // if arg is -s, search for a the string in the year arg passed
+    // if no arg, display help file
 
 }
 
