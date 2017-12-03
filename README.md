@@ -2,14 +2,14 @@
 
 **This project is currently in ALPHA.. please stand by**
 
-##Installation
+## Installation
 
-##Usage
+## Usage
 
-##configuring
+## Configuring
 
-##Checklist Schema
+## Checklist Schema
 
-##History
+## History
 
-##License
+## License
