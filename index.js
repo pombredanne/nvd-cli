@@ -190,12 +190,14 @@ function NVDCheckFull(yearToSearch) {
 }
 
 function helpInfo() {
+    // NOTE: this list is incomplete
     console.log('About: \nThis script is designed to help you get information from the\nNVD and/or generate a report based on a checklist file');
     console.log('\n\nUsage: nvd-cli <command> OR nvd-cli -arg');
-    console.log(`\nnvd-cli -r OR --recent\t\tGenerate a report based on a checklist 
-                                file for RECENT vulnerabilities that match the checklist`);
-    console.log(`\nnvd-cli -f <year> OR --full <year> Generate a report based on a checklist file for 
-                                vulnerabilities found in the <year> arg passed`)
+    console.log(`\nnvd-cli -r OR --recent\t\t\tGenerate a report based on a checklist file for RECENT 
+                                        vulnerabilities that match the checklist`);
+    console.log(`\nnvd-cli -f <year> OR --full <year>\tGenerate a report based on a checklist file for 
+                                        vulnerabilities found in the <year> arg passed`);
+
 }
 
 // script starts here, args are processed before anything is done
