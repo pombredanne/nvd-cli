@@ -40,6 +40,7 @@ TODO: allow for a checklist file arg to be passed
 TODO: allow for output location
 TODO: make this usable as an NPM command line util? (kind of like node-mailer CLI)
 TODO: create a more sacalable arg system
+TODO: create defaults for all arg types
 */
 
 function capitalizeFirstLetter(string) {                            //used to clean up some WF data 
@@ -212,8 +213,25 @@ function handleOutPutArg() {
 
 // script will eventually start here
 function main() {
+    // vars to hold arg values and their defaults
+    var defaultOutputLocation = process.cwd();
+    var defaultOutPutFormat = '.pdf';
+    var defaultOutputName = 'report'
+
+    // check through the args passed to decide what to do and arg values to reassign
     if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
     // if argv has help arg, return help, if help <command> is passed, return better helpmsg
+    if (argv.h || argv.help || argv._.indexOf('help') !== -1) {
+        return helpInfo();
+    } else if (argv.c || argv.checklist) {
+        // check for a checklist valid file path
+    } else if (argv.o || argv.output) {
+        // change the output name
+        // validate the arg first
+        if(argv.o == null || argv.output == null) {
+            console.log('INVALID')
+        }
+    }
     // if arg -o, allow for output rename to be handled
     // if arg is -r, get recent data
     // if arg is -f, get FULL data for a year that was passed
@@ -223,6 +241,8 @@ function main() {
 }
 
 // script starts here, args are processed before anything is done
+
+main();
 if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
 if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
     console.log(`Getting NVD recent data to compare against ${config.checklistName}`);
