@@ -120,7 +120,7 @@ function parseNVDData(NVDObjArray) {
             });
         });
     });
-    console.log(`Number of mathces found: ${affectedItems.length}`);
+    console.log(`Number of matches found: ${affectedItems.length}`);
     return affectedItems;
 }
 
@@ -186,9 +186,16 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
     var yearArg = '2017';
     if (process.argv[3]) {
         yearArg = process.argv[3];
+        // verify the arg is a valid year
+        if (isNaN(yearArg) || yearArg.charAt(0) !== '2') {
+            console.log(bright, `\n${yearArg} is not a valid year, the year arg should look something like this: 2017`);
+            console.log(reset, '');                                      // Reset the console color
+        } else {
+            console.log(yearArg);
+        }
     } else {
         console.log(bright, `\nNo year argument for full search, default is ${yearArg}`);
-        console.log(reset,'');                                      // Reset the console color
+        console.log(reset, '');                                      // Reset the console color
     }
     console.log(`Getting NVD FULL data to compare against ${config.checklistName}`);
     Promise.resolve()                                               // start the promise chain as resolved to avoid issues
