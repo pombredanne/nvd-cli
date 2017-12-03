@@ -4,7 +4,10 @@ var extract = require('extract-zip');
 const util = require('util');                                   // for using child-process
 const PDFDocument = require('pdfkit');
 const exec = require('child-process-promise').exec;
+// custom requires
 const config = require('./config');                             // confiog file for script
+const NVDClass = require('./lib/NVDJSONClass');
+
 const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 const bright = '\x1b[1m';
 const reset = '\x1b[0m';
@@ -26,8 +29,9 @@ TODO: create a CLI search functionality (search for a product vulnerability or v
 TODO: when done, work on README
 TODO: add filename and type arg handlers
 TODO: flesh out the --full arg further to allow for specific years to be passed
-TODO: update project scope
+TODO: update project scope description
 TODO: for recents, ensure that the CVE review is FINAL?
+TODO: add params for every function that needs them
 */
 
 function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
@@ -161,6 +165,8 @@ function writePDFReport(affectedItemsArray, timeArg) {
 
 }
 
+function NVDCheckFull(yearToSearch)
+
 // script starts here, args are processed before anything is done
 if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
 if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
@@ -192,7 +198,8 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
             console.log(bright, `\n${yearArg} is not a valid year, the year arg should look something like this: 2017`);
             console.log(reset, '');                                      // Reset the console color
         } else {
-            console.log(yearArg);
+            let NVDTest = new NVDClass(yearArg);
+            console.log(NVDTest);
         }
     } else {
         console.log(bright, `\nNo year argument for full search, default is ${yearArg}`);
