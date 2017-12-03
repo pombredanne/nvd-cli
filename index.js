@@ -6,7 +6,7 @@ const PDFDocument = require('pdfkit');
 const exec = require('child-process-promise').exec;
 // custom requires
 const config = require('./config');                             // confiog file for script
-const NVDClass = require('./lib/NVDJSONClass');
+const NVDClass = require('./lib/NVDJSONClass');                 // helper for getting at NVD Data for specific years
 
 const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 const bright = '\x1b[1m';
@@ -23,19 +23,16 @@ Notes:
 - for PDFKit, doc.moveDown and \n being in the string do the same thing
 
 TODO: Allow for vulerability severity configuration based on the config.js file
-TODO: allow argument flag for getting RECENT or ALL year 20XX vulnerabilities
-TODO: Do something with the date on NVD entries
 TODO: create a CLI search functionality (search for a product vulnerability or vendor list)
 TODO: when done, work on README
-TODO: add filename and type arg handlers
-TODO: flesh out the --full arg further to allow for specific years to be passed
+TODO: add filename handler for the PDF/TXT and the type of file to generate
 TODO: update project scope description
 TODO: for recents, ensure that the CVE review is FINAL?
 TODO: add params for every function that needs them
 TODO: fix the global JSON data issue that really shouldn't be there
 */
 
-function capitalizeFirstLetter(string) {                    //used to clean up some WF data 
+function capitalizeFirstLetter(string) {                            //used to clean up some WF data 
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
@@ -168,20 +165,18 @@ function writePDFReport(affectedItemsArray, timeArg) {
 
 function NVDCheckFull(yearToSearch) {
     // yearToSearch should already be validated
-
-    // generate the new NVDData to work with
-    let NVDFileData = new NVDClass(yearToSearch);
+    let NVDFileData = new NVDClass(yearToSearch);                   // generate the new NVDData references to work with
     console.log(`Getting NVD FULL data to compare against ${config.checklistName}`);
-    return Promise.resolve()                                               // start the promise chain as resolved to avoid issues
-        .then(() => getNVDZipFile(NVDFileData.NVDURL, NVDFileData.zipFileLocation))      // Get the FULL json that is in .zip format
+    return Promise.resolve()                                        // start the promise chain as resolved to avoid issues
+        .then(() => getNVDZipFile(NVDFileData.NVDURL, NVDFileData.zipFileLocation))
         .then(() => extractZipFile(NVDFileData.zipFileLocation))
         .then(() => {
             let NVDJSON = fs.readFileSync(NVDFileData.NVDJSONFileName, 'utf-8');
             let parsedNVDData = JSON.parse(NVDJSON);
-            globalNVDJSON = parsedNVDData;                              // used to allow the PDF file acess to certain data
+            globalNVDJSON = parsedNVDData;                          // used to allow the PDF file acess to certain data
             return parsedNVDData;
         })
-        .then((NVDData) => parseNVDData(NVDData))
+        .then((NVDData) => parseNVDData(NVDData))                   // sort through the entire data list and parse for matches
         .then((affectedItemsArray) => writePDFReport(affectedItemsArray, yearToSearch))
         .then(() => {
             if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
@@ -233,6 +228,6 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
     }
 
 } else {
-    //display help file here
+    // display help file here!!
     console.log('Help:');
 }
