@@ -3,5 +3,5 @@ node_modules/
 nvdcve-1.0-2017.json
 nvdcve-1.0-recent.json
 checklist.json
-output.pdf
+**.pdf
 nvdcve-1.0*.json
