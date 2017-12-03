@@ -41,6 +41,8 @@ TODO: allow for output location
 TODO: make this usable as an NPM command line util? (kind of like node-mailer CLI)
 TODO: create a more sacalable arg system
 TODO: create defaults for all arg types
+TODO: REAAAAAAALLLLLLLLLLY work on getting a way to redirect the output location AND the name
+not just the name!
 */
 
 function capitalizeFirstLetter(string) {                            //used to clean up some WF data 
@@ -245,13 +247,13 @@ function main() {
     // vars to hold arg values and their defaults
     var defaultOutputLocation = process.cwd();
     var defaultOutPutFormat = '.pdf';
-    var defaultOutputName = 'report'
+    var defaultOutputName = 'report';
 
     // check through the args passed to decide what to do and arg values to reassign
     if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
     // if argv has help arg, return help, if help <command> is passed, return better helpmsg
     if (argv.h || argv.help || argv._.indexOf('help') !== -1) {
-        return helpInfo(defaultOutputLocation, defaultOutputName);
+        return helpInfo();
     }
     if (argv.c || argv.checklist) {
         // check for a checklist valid file path
