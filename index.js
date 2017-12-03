@@ -230,7 +230,7 @@ function NVDCheckRecent(outputLocation, outputFormat, checklistLocation, outputN
 
 function helpInfo() {
     // NOTE: this list is incomplete
-    console.log('About: \nThis script is designed to help you get information from the\nNVD and/or generate a report based on a checklist file');
+    console.log('\nAbout: \nThis script is designed to help you get information from the\nNVD and/or generate a report based on a checklist file');
     console.log('\n\nUsage: nvd-cli <command> OR nvd-cli -arg');
     console.log(`\nnvd-cli -r OR --recent\t\t\tGenerate a report based on a checklist file for RECENT 
                                         vulnerabilities that match the checklist`);
@@ -286,8 +286,8 @@ function main() {
 
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
         console.log('Please provide a task arg (-r, --recent, -f --full, -s --search');
+        return helpInfo();
     }
-    // if arg is -r, get recent data
     // if arg is -f, get FULL data for a year that was passed
     // if arg is -s, search for a the string in the year arg passed
     // if no arg, display help file
