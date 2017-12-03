@@ -13,7 +13,7 @@
 ## History
 
 - **0.1.2**
-    - Added help command/arg handler.  help <command> not yet working
+    - Added help command/arg handler.  help `command` not yet working
 
 
 - **0.1.0**
