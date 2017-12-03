@@ -240,10 +240,8 @@ if (process.argv[2] == '-r' || process.argv[2] == '--recent') {
         console.log(reset, '');                                      // Reset the console color
         return NVDCheckFull(yearArg);
     }
-
 } else if (process.argv[2] == '-h' || process.argv[2] == '--help' || process.argv[2] == 'help') {
     return helpInfo();
 } else {
-    // Display help information since nothing was passed
-    return helpInfo();
+    return helpInfo();                                              // Display help information since nothing was passed
 }
