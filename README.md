@@ -19,11 +19,26 @@ $ nvd-cli --help
 
 Usage: nvd-cli <primary flag> <primary flag arg> [optional flags]
 
--f, --full <year>     Conduct a full search against the default or provided 
-                      checklist for a given <year>
-                      
+-f, --full            Conduct a full search against the default or provided 
+                      checklist for a given <year> arg
+
 -r, --recent          Search for vulnerabilaties in the NVD recent category using default 
                       or provided checklist
+
+-s, --search          Specifically search for an NVD vulnerability matching the providded 
+                      <product> or <vendor> string and optional <year> arg
+
+- OPTIONAL PARAMETERS -
+
+-o, --output          Change the nvd-cli output file name and/or location
+
+-c, --checklist       Change the nvd-cli checklist file name and/or location
+
+- MISC PARAMETERS -
+
+-h, --help, help      Display this help text or try -h <command>
+
+-v, --version          Get the version of nvd-cli you are currently running
 
 ```
 
