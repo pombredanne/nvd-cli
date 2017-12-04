@@ -11,7 +11,7 @@ const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 const bright = '\x1b[1m';
 const reset = '\x1b[0m';
 const debug = config.debug;                                     // used to allow/disallow verbose logging
-const ver = '0.3.0';                                            // arbitrary version number, should match NPM version
+const ver = '0.3.1';                                            // arbitrary version number, should match NPM version
 
 var globalNVDJSON;
 /*
@@ -134,7 +134,7 @@ function searchNVDProducts(NVDObjArray, productSearchQuery) {
         entry.cve.affects.vendor.vendor_data.forEach((entryV, indexV) => {
             // check against the list of products to match
             entryV.product.product_data.forEach((product, productIndex) => {
-                if (product.product_name == productSearchQuery.toLowerCase()) {
+                if (product.product_name == productSearchQuery.toLowerCase() || product.product_name.includes(productSearchQuery.toLowerCase())) {
                     if (debug) { console.log(entry); }
                     var versionsAffected = [];
                     var referenceURLs = [];
@@ -294,13 +294,17 @@ function helpInfo() {                                               // NOTE: thi
 function productSearchHandler(yearToSearch, productSearchQuery, outputLocation, outputFormat, outputName) {
     if (typeof (productSearchQuery) !== 'string') {
         return console.log('Error: Product search term must be a string');
+    } else if (productSearchQuery.length < 3) {
+        console.log(`Error: please give a product name with at least 3 characters`);
+        process.exit(0);
     } else {
         console.log(`Searching NVD year ${yearToSearch} for ${productSearchQuery}`);
-        Promise.resolve()                                               // start the promise chain as resolved to avoid issues
-            .then(() => getNVDZipFile(config.NVDURLRecent, config.zipFileNameRecent))        // Get the RECENT json that is in .zip format
-            .then(() => extractZipFile(config.zipFileNameRecent))
+        let NVDFileData = new NVDClass(yearToSearch);                   // generate the new NVDData references to work with
+        return Promise.resolve()                                               // start the promise chain as resolved to avoid issues
+            .then(() => getNVDZipFile(NVDFileData.NVDURL, NVDFileData.zipFileLocation))
+            .then(() => extractZipFile(NVDFileData.zipFileLocation))
             .then(() => {
-                let NVDJSON = fs.readFileSync(config.NVDJSONFileNameRecent, 'utf-8');
+                let NVDJSON = fs.readFileSync(NVDFileData.NVDJSONFileName, 'utf-8');
                 let parsedNVDData = JSON.parse(NVDJSON);
                 globalNVDJSON = parsedNVDData;                          // used to allow the PDF file acess to certain data
                 return parsedNVDData;
@@ -308,7 +312,7 @@ function productSearchHandler(yearToSearch, productSearchQuery, outputLocation, 
             .then((NVDData) => searchNVDProducts(NVDData, productSearchQuery))
             .then((affectedItemsArray) => {
                 if (outputFormat == '.pdf') {
-                    writePDFReport(affectedItemsArray, 'SEARCH', outputName);
+                    writePDFReport(affectedItemsArray, `SEARCH ${yearToSearch}`, outputName);
                 } else if (outputFormat == '.txt') {
                     console.log('.txt output not yet supported');
                 } else {
@@ -330,9 +334,8 @@ function NVDYearValidator(yearToValidate) {
     } else {
         if (isNaN(yearToValidate) || yearToValidate.toString().charAt(0) !== '2' || yearToValidate.toString().charAt(1) !== '0' || yearToValidate.length < 4 || yearToValidate.length > 4 || yearToValidate < 2003) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 }
 
