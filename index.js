@@ -26,7 +26,6 @@ Notes:
 - for PDFKit, doc.moveDown and \n being in the string do the same thing
 
 TODO: Allow for vulerability severity arg (IE Ignore 'LOW' scoring entries that match)
-TODO: create a CLI search functionality (search for a product vulnerability or vendor list)
 TODO: add output type option for reports (.txt or .PDF)
 TODO: for recents, ensure that the CVE review is FINAL?
 TODO: add params for every function that needs them
@@ -35,6 +34,7 @@ TODO: make this usable as an NPM command line util! (kind of like node-mailer CL
 TODO: allow for better help args handling
 TODO: make the NVDCheckFull/Recent one funtion (it's doable!)
 TODO: start documenting on github and the actual script what we already have
+TODO: add a vendor search option
 */
 
 function capitalizeFirstLetter(string) {                            // used to clean up some of the NVD names for products
@@ -120,8 +120,7 @@ function parseNVDData(NVDObjArray) {
                                     scoreString: 'NONE'
                                 }
                             }
-                            // push the affected item to the array to return
-                            affectedItems.push(affectedItem);
+                            affectedItems.push(affectedItem);       // push the affected item to the array to return
                         }
                     });
                 }
@@ -139,7 +138,7 @@ function searchNVDProducts(NVDObjArray, productSearchQuery) {
     NVDObjArray.CVE_Items.forEach((entry, index) => {
         var affectedItem = {};
         entry.cve.affects.vendor.vendor_data.forEach((entryV, indexV) => {
-            // check against the list of product to match
+            // check against the list of products to match
             entryV.product.product_data.forEach((product, productIndex) => {
                 if (product.product_name == productSearchQuery.toLowerCase()) {
                     if (debug) { console.log(entry); }
@@ -187,13 +186,12 @@ function searchNVDProducts(NVDObjArray, productSearchQuery) {
                             scoreString: 'NONE'
                         }
                     }
-                    // push the affected item to the array to return
-                    matches.push(affectedItem);
+                    matches.push(affectedItem);                     // push the affected item to the array to return
                 }
             });
         });
     });
-    console.log(`Number of matches found: ${matches.length}`);
+    console.log(`Number of matches found for '${productSearchQuery}': ${matches.length}`);
     return matches;
 }
 
