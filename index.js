@@ -16,9 +16,6 @@ const reset = '\x1b[0m';
 const debug = config.debug;
 const ver = '0.2.0';                                            // arbitrary version number, should match NPM version
 
-// vars to hold arg values and their defaults
-var outputLocation = process.cwd();
-
 var globalNVDJSON;
 /*
 simple script to get recent NVD JSON data from their CDN in a zip format
@@ -200,7 +197,7 @@ function NVDCheckFull(yearToSearch) {
 }
 
 function NVDCheckRecent(outputLocation, outputFormat, checklistLocation, outputName) {
-    console.log(`Getting NVD recent data to compare against ${config.checklistName}`);
+    console.log(`Getting NVD recent data to compare against ${checklistLocation}`);
     Promise.resolve()                                               // start the promise chain as resolved to avoid issues
         .then(() => getNVDZipFile(config.NVDURLRecent, config.zipFileNameRecent))        // Get the RECENT json that is in .zip format
         .then(() => extractZipFile(config.zipFileNameRecent))
@@ -244,21 +241,52 @@ function handleOutPutArg() {
 
 // script will eventually start here
 function main() {
+    if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
     // vars to hold arg values and their defaults
     var defaultOutputLocation = process.cwd();
     var defaultOutPutFormat = '.pdf';
     var defaultOutputName = 'report';
-
+    var defaultChecklistLoc = config.checklistName;
     // check through the args passed to decide what to do and arg values to reassign
-    if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
+
     // if argv has help arg, return help, if help <command> is passed, return better helpmsg
     if (argv.h || argv.help || argv._.indexOf('help') !== -1) {
         return helpInfo();
     }
-    if (argv.c || argv.checklist) {
+    if (argv.c) {
         // check for a checklist valid file path
+        // validate the arg first
+        if (typeof (argv.c) !== 'string') {
+            console.log('Error: Please provide a string for the output file name');
+            process.exit(0);
+        } else {
+            if (fs.existsSync(argv.c)) {
+                defaultChecklistLoc = argv.c;
+            } else {
+                console.log(`Error: ${argv.c} is not a valid location`);
+                process.exit(0);
+            }
+        }
     }
-
+    if (argv.checklist) {
+        // check for a checklist valid file path
+        // validate the arg first
+        if (typeof (argv.c) !== 'string') {
+            console.log('Error: Please provide a string for the output file name');
+            process.exit(0);
+        } else {
+            if (fs.existsSync(argv.checklist)) {
+                defaultChecklistLoc = argv.checklist;
+            } else {
+                console.log(`Error: ${argv.checklist} is not a valid location`);
+                process.exit(0);
+            }
+        }
+    }
+    if (argv.c && argv.checklist) {
+        console.log('Error: Please only use -c or --checklist, not both!');
+        process.exit(0);
+    }
     //TODO: clean the file name output renames to not have invalid chars
     if (argv.o) {
         // change the output name
@@ -277,11 +305,12 @@ function main() {
         }
     }
     if (argv.o && argv.output) {
-        console.log('Please only use -o or --output, not both!')
+        console.log('Please only use -o or --output, not both!');
+        process.exit(0);
     }
     // recent needs no extra arg checking
     if (argv.r || argv.recent || argv._.indexOf('recent') !== -1) {
-        return NVDCheckRecent(defaultOutputLocation, '.pdf', config.checklistName, defaultOutputName);
+        return NVDCheckRecent(defaultOutputLocation, '.pdf', defaultChecklistLoc, defaultOutputName);
     }
 
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
