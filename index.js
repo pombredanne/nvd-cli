@@ -35,6 +35,7 @@ TODO: allow for better help args handling
 TODO: make the NVDCheckFull/Recent one funtion (it's doable!)
 TODO: start documenting on github and the actual script what we already have
 TODO: add a vendor search option
+TODO: have the search look for non-exact matches!
 */
 
 function capitalizeFirstLetter(string) {                            // used to clean up some of the NVD names for products
@@ -288,8 +289,7 @@ function NVDCheckRecent(outputLocation, outputFormat, checklistLocation, outputN
         })
 }
 
-function helpInfo() {
-    // NOTE: this list is incomplete
+function helpInfo() {                                               // NOTE: this list is incomplete
     console.log('\nAbout: \nThis script is designed to help you get information from the\nNVD and/or generate a report based on a checklist file');
     console.log('\n\nUsage: nvd-cli <command> OR nvd-cli -arg');
     console.log(`\nnvd-cli -r OR --recent\t\t\tGenerate a report based on a checklist file for RECENT 
@@ -298,12 +298,11 @@ function helpInfo() {
                                         vulnerabilities found in the <year> arg passed`);
 }
 
-function productSearchHandler(yearToSearch, productSearchQuery, outputLocation, outputFormat, checklistLocation, outputName) {
+function productSearchHandler(yearToSearch, productSearchQuery, outputLocation, outputFormat, outputName) {
     if (typeof (productSearchQuery) !== 'string') {
         return console.log('Error: Product search term must be a string');
     } else {
-        // parse the provided year for products that match the query given
-        // first get the data like the other NVDChecks
+        console.log(`Searching NVD year ${yearToSearch} for ${productSearchQuery}`);
         Promise.resolve()                                               // start the promise chain as resolved to avoid issues
             .then(() => getNVDZipFile(config.NVDURLRecent, config.zipFileNameRecent))        // Get the RECENT json that is in .zip format
             .then(() => extractZipFile(config.zipFileNameRecent))
@@ -439,7 +438,7 @@ function main() {
             defaultYearArg = argv.s;
         }
         if (argv.product) {
-            return productSearchHandler(defaultYearArg, argv.product, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
+            return productSearchHandler(defaultYearArg, argv.product, defaultOutputLocation, defaultOutputFormat, defaultOutputName);
         } else {
             console.log(`Unsupported or no search type`);
         }
