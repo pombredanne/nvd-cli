@@ -240,6 +240,10 @@ function helpInfo() {
                                         vulnerabilities found in the <year> arg passed`);
 }
 
+function searchHandler(searchQuery) {
+    console.log(searchQuery);
+}
+
 // script starts here
 function main() {
     if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
@@ -337,13 +341,18 @@ function main() {
                 return NVDCheckFull(argv.full, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
             }
         }
+    } 
+    if (argv.s) {
+        return searchHandler(argv.s);
+    }
+    if (argv.search) {
+        return searchHandler(argv.s);
     }
     // if no cammand arg is given, display the help section
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
         console.log('Error: Please provide a task arg (-r, (--recent), -f (--full), -s (--search)');
         return helpInfo();
     }
-    // if arg is -s, search for a the string in the year arg passed
 }
 
 main();                                                             // script starts here, args are processed before anything is done
