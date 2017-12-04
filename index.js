@@ -11,7 +11,7 @@ const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 const bright = '\x1b[1m';
 const reset = '\x1b[0m';
 const debug = config.debug;                                     // used to allow/disallow verbose logging
-const ver = '0.3.1';                                            // arbitrary version number, should match NPM version
+const ver = '0.3.2';                                            // arbitrary version number, should match NPM version
 
 var globalNVDJSON;
 /*
@@ -282,12 +282,32 @@ function NVDCheckRecent(outputLocation, outputFormat, checklistLocation, outputN
 }
 
 function helpInfo() {                                               // NOTE: this list is incomplete
-    console.log('\nAbout: \nThis script is designed to help you get information from the\nNVD and/or generate a report based on a checklist file');
-    console.log('\n\nUsage: nvd-cli <command> OR nvd-cli -arg');
-    console.log(`\nnvd-cli -r OR --recent\t\t\tGenerate a report based on a checklist file for RECENT 
-                                        vulnerabilities that match the checklist`);
-    console.log(`\nnvd-cli -f <year> OR --full <year>\tGenerate a report based on a checklist file for 
-                                        vulnerabilities found in the <year> arg passed`);
+    console.log(`
+    About: This script is designed to help you get information from the\n    NVD and/or generate a report based on a checklist file`);
+    console.log(`
+    Usage: nvd-cli <primary flag> <primary flag arg> [optional flags]
+    
+    -f, --full            Conduct a full search against the default or provided 
+                          checklist for a given <year> arg
+    
+    -r, --recent          Search for vulnerabilaties in the NVD recent category using default 
+                          or provided checklist
+    
+    -s, --search          Specifically search for an NVD vulnerability matching the providded 
+                          <product> or <vendor> string and optional <year> arg
+    
+    - OPTIONAL PARAMETERS -
+    
+    -o, --output          Change the nvd-cli output file name and/or location
+    
+    -c, --checklist       Change the nvd-cli checklist file name and/or location
+    
+    - MISC PARAMETERS -
+    
+    -h, --help, help      Display this help text or try -h <command>
+    
+    -v, --version         Get the version of nvd-cli you are currently running
+    `);
 }
 
 function productSearchHandler(yearToSearch, productSearchQuery, outputLocation, outputFormat, outputName) {
