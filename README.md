@@ -58,7 +58,7 @@ Usage: nvd-cli <primary flag> <primary flag arg> [optional flags]
 - **0.3.0**
     - `-s` functionality has been (mostly) implimented
     - `-v` flag will now show the version of nvd-cli installed
-    - Najor improvment to code layout
+    - Major improvment to code layout
     - Much more validation has been put in place
 
 - **0.2.0**
