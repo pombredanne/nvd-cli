@@ -36,6 +36,8 @@ TODO: fix the global JSON data issue that really shouldn't be there
 TODO: make this usable as an NPM command line util? (kind of like node-mailer CLI)
 TODO: create defaults for all arg types
 TODO: allow for better help args handling
+TODO move validations for -f and -s to their own functions
+TODO: make the NVDCheckFull/Recent one funtion (it's doable!)
 */
 
 function capitalizeFirstLetter(string) {                            // used to clean up some of the NVD names for products
@@ -169,10 +171,9 @@ function writePDFReport(affectedItemsArray, timeArg, outputArg) {
     console.log(`Wrote report as ${outputArg}.pdf`);
 }
 
-function NVDCheckFull(yearToSearch) {
-    // yearToSearch should already be validated
+function NVDCheckFull(yearToSearch, outputLocation, outputFormat, checklistLocation, outputName) {
     let NVDFileData = new NVDClass(yearToSearch);                   // generate the new NVDData references to work with
-    console.log(`Getting NVD FULL data to compare against ${config.checklistName}`);
+    console.log(`Getting NVD FULL data to compare against ${checklistLocation}`);
     return Promise.resolve()                                        // start the promise chain as resolved to avoid issues
         .then(() => getNVDZipFile(NVDFileData.NVDURL, NVDFileData.zipFileLocation))
         .then(() => extractZipFile(NVDFileData.zipFileLocation))
@@ -183,7 +184,15 @@ function NVDCheckFull(yearToSearch) {
             return parsedNVDData;
         })
         .then((NVDData) => parseNVDData(NVDData))                   // sort through the entire data list and parse for matches
-        .then((affectedItemsArray) => writePDFReport(affectedItemsArray, yearToSearch))
+        .then((affectedItemsArray) => {
+            if (outputFormat == '.pdf') {
+                writePDFReport(affectedItemsArray, yearToSearch, outputName);
+            } else if (outputFormat == '.txt') {
+                console.log('.txt output not yet supported');
+            } else {
+                throw new Error('Error: Unknown output format was passed to function NVDCheckRecent');
+            }
+        })
         .then(() => {
             if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
         })
@@ -210,7 +219,7 @@ function NVDCheckRecent(outputLocation, outputFormat, checklistLocation, outputN
             } else if (outputFormat == '.txt') {
                 console.log('.txt output not yet supported');
             } else {
-                throw new Error('No output format was passed to function NVDCheckRecent');
+                throw new Error('Error: Unknown output format was passed to function NVDCheckRecent');
             }
         })
         .then(() => {
@@ -231,7 +240,7 @@ function helpInfo() {
                                         vulnerabilities found in the <year> arg passed`);
 }
 
-// script will eventually start here
+// script starts here
 function main() {
     if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
     // vars to hold arg values and their defaults
@@ -306,29 +315,35 @@ function main() {
     if (argv.f) {
         // ensure the -f arg has a year passed
         if (typeof (argv.f) !== 'number') {
-            console.log(`Error: Please provide a year for -f to search by (EX: 2012)`)
+            console.log(`Error: Please provide a year for -f to search by (EX: 2012)`);
         } else {
             // ensure a valid year was passed
             if (isNaN(argv.f) || argv.f.toString().charAt(0) !== '2' || argv.f.toString().charAt(1) !== '0' || argv.f.length < 4 || argv.f.length > 4 || argv.f < 2003) {
                 console.log(`Error: ${argv.f} is not a valid year to search by`);
             } else {
-                return NVDCheckFull(argv.f);
+                return NVDCheckFull(argv.f, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
             }
-
         }
     }
     if (argv.full) {
-
+        // ensure the -full arg has a year passed
+        if (typeof (argv.full) !== 'number') {
+            console.log(`Error: Please provide a year for --full to search by (EX: 2012)`);
+        } else {
+            // ensure a valid year was passed
+            if (isNaN(argv.full) || argv.full.toString().charAt(0) !== '2' || argv.full.toString().charAt(1) !== '0' || argv.full.length < 4 || argv.full.length > 4 || argv.full < 2003) {
+                console.log(`Error: ${argv.full} is not a valid year to search by`);
+            } else {
+                return NVDCheckFull(argv.full, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
+            }
+        }
     }
-
     // if no cammand arg is given, display the help section
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
-        console.log('Error: Please provide a task arg (-r, --recent, -f --full, -s --search');
+        console.log('Error: Please provide a task arg (-r, (--recent), -f (--full), -s (--search)');
         return helpInfo();
     }
-    // if arg is -f, get FULL data for a year that was passed
     // if arg is -s, search for a the string in the year arg passed
-
 }
 
 main();                                                             // script starts here, args are processed before anything is done
