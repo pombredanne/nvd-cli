@@ -1,5 +1,5 @@
 {
-  "name": "nvdnotifier",
+  "name": "nvd-cli",
   "version": "0.2.0",
   "description": "Check the NVD for vulnerabilites based on a provided checklist file and output results to text or PDF",
   "main": "index.js",
@@ -8,6 +8,9 @@
     "extract-zip": "^1.6.5",
     "minimist": "^1.2.0",
     "pdfkit": "^0.8.3"
+  },
+  "bin": {
+  "nvd-cli": "./index.js"
   },
   "devDependencies": {},
   "scripts": {
