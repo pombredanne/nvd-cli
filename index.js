@@ -236,8 +236,8 @@ function main() {
     if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
     // vars to hold arg values and their defaults
     var defaultOutputLocation = process.cwd();
-    var defaultOutPutFormat = '.pdf';
-    var defaultOutputName = '../report';
+    var defaultOutputFormat = '.pdf';
+    var defaultOutputName = './report';
     var defaultChecklistLoc = config.checklistName;
     // check through the args passed to decide what to do and arg values to reassign
 
@@ -300,12 +300,14 @@ function main() {
     }
     // recent needs no extra arg checking
     if (argv.r || argv.recent || argv._.indexOf('recent') !== -1) {
-        return NVDCheckRecent(defaultOutputLocation, defaultOutPutFormat, defaultChecklistLoc, defaultOutputName);
+        return NVDCheckRecent(defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
     }
-    if(argv.f) {
+    if (argv.f) {
 
     }
-    if(argv.full )
+    if (argv.full) {
+
+    }
 
 
     //if no cammand arg is given, display the help section
