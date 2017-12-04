@@ -1,6 +1,6 @@
 # nvd-cli
 
-**This project is currently in ALPHA.. please stand by...**
+**This project is currently in BETA.. please stand by...**
 
 ## Installation
 
@@ -11,6 +11,14 @@
 ## Checklist Schema
 
 ## History
+
+- **0.3.0**
+    - `-s` functionality has been (mostly) implimented
+    - `-v` flag will now show the version of nvd-cli installed
+    - Najor improvment to code layout
+    - Much more validation has been put in place
+
+
 
 - **0.2.0**
     - A new (better) argument handler is now in place
