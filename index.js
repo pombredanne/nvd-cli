@@ -14,7 +14,7 @@ const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 const bright = '\x1b[1m';
 const reset = '\x1b[0m';
 const debug = config.debug;
-const ver = '0.2.0';                                            // arbitrary version number, should match NPM version
+const ver = '0.3.0';                                            // arbitrary version number, should match NPM version
 
 var globalNVDJSON;
 /*
