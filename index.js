@@ -283,20 +283,19 @@ function main() {
         console.log('Error: Please only use -c or --checklist, not both!');
         process.exit(0);
     }
-    //TODO: clean the file name output renames to not have invalid chars
     // in theory this can be a directory not just a file name --needs to be tested against
     if (argv.o) {
-        // change the output name
-        // validate the arg first
-        if (typeof (argv.o) !== 'string') {
+        if (typeof (argv.o) !== 'string') {                         // validate the arg first
             console.log('Please provide a string for the output file name');
+            process.exit(0);
         } else {
-            defaultOutputName = argv.o;
+            defaultOutputName = argv.o;                             // assign the file output name/location to the passed arg somce it is valid
         }
     }
     if (argv.output) {
-        if (typeof (argv.o) !== 'string') {
+        if (typeof (argv.output) !== 'string') {
             console.log('Please provide a string for the output file name');
+            process.exit(0);
         } else {
             defaultOutputName = argv.output;
         }
@@ -309,14 +308,13 @@ function main() {
     if (argv.r || argv.recent || argv._.indexOf('recent') !== -1) {
         return NVDCheckRecent(defaultOutputLocation, '.pdf', defaultChecklistLoc, defaultOutputName);
     }
-
+    //if no cammand arg is given, display the help section
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
         console.log('Error: Please provide a task arg (-r, --recent, -f --full, -s --search');
         return helpInfo();
     }
     // if arg is -f, get FULL data for a year that was passed
     // if arg is -s, search for a the string in the year arg passed
-    // if no arg, display help file
 
 }
 
