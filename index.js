@@ -242,11 +242,23 @@ function helpInfo() {
 }
 
 //TODO: eventually allow for a year arg to be passed
-function productSearchHandler(productSearchQuery) {
-    if(typeof(productSearchQuery) !== 'string') {
-        return console.log('Error: Product search term must be a string')
+function productSearchHandler(yearToSearch, productSearchQuery) {
+    if (typeof (productSearchQuery) !== 'string') {
+        return console.log('Error: Product search term must be a string');
     } else {
-        //return the actualy function
+        console.log('Yay!');
+    }
+}
+
+function NVDYearValidator(yearToValidate) {
+    if (typeof (yearToValidate) !== 'number') {
+        return false;
+    } else {
+        if (isNaN(yearToValidate) || yearToValidate.toString().charAt(0) !== '2' || yearToValidate.toString().charAt(1) !== '0' || yearToValidate.length < 4 || yearToValidate.length > 4 || yearToValidate < 2003) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
 
@@ -323,34 +335,32 @@ function main() {
         return NVDCheckRecent(defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
     }
     if (argv.f) {
-        // ensure the -f arg has a year passed
-        if (typeof (argv.f) !== 'number') {
-            console.log(`Error: Please provide a year for -f to search by (EX: 2012)`);
+        // ensure a valid year was passed
+        if (!NVDYearValidator(argv.f)) {
+            console.log(`Error: ${argv.f} is not a valid year to search by`);
         } else {
-            // ensure a valid year was passed
-            if (isNaN(argv.f) || argv.f.toString().charAt(0) !== '2' || argv.f.toString().charAt(1) !== '0' || argv.f.length < 4 || argv.f.length > 4 || argv.f < 2003) {
-                console.log(`Error: ${argv.f} is not a valid year to search by`);
-            } else {
-                return NVDCheckFull(argv.f, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
-            }
+            return NVDCheckFull(argv.f, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
         }
     }
     if (argv.full) {
-        // ensure the -full arg has a year passed
-        if (typeof (argv.full) !== 'number') {
-            console.log(`Error: Please provide a year for --full to search by (EX: 2012)`);
+        // ensure a valid year was passed
+        if (!NVDYearValidator(argv.full)) {
+            console.log(`Error: ${argv.full} is not a valid year to search by`);
         } else {
-            // ensure a valid year was passed
-            if (isNaN(argv.full) || argv.full.toString().charAt(0) !== '2' || argv.full.toString().charAt(1) !== '0' || argv.full.length < 4 || argv.full.length > 4 || argv.full < 2003) {
-                console.log(`Error: ${argv.full} is not a valid year to search by`);
+            return NVDCheckFull(argv.full, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
+        }
+    }
+    if (argv.s) {
+        // ensure a valid year was passed
+        if (!NVDYearValidator(argv.full)) {
+            console.log(`Error: ${argv.full} is not a valid year to search by`);
+        } else {
+            if (argv.product) {
+                return productSearchHandler(argv.s, argv.product);
             } else {
-                return NVDCheckFull(argv.full, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
+                console.log(`Unsupported or no search type`);
             }
         }
-    } 
-
-    if (argv.product) {
-        return productSearchHandler(argv.product);
     }
     // if no cammand arg is given, display the help section
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
