@@ -243,7 +243,7 @@ function productSearchHandler(yearToSearch, productSearchQuery) {
     if (typeof (productSearchQuery) !== 'string') {
         return console.log('Error: Product search term must be a string');
     } else {
-        console.log('Yay!');
+        
     }
 }
 
@@ -306,7 +306,6 @@ function main() {
         console.log('Error: Please only use -c or --checklist, not both!');
         process.exit(0);
     }
-    // in theory this can be a directory not just a file name --needs to be tested against
     if (argv.o) {
         if (typeof (argv.o) !== 'string') {                         // validate the arg first
             console.log('Error: Please provide a string for the output file name');
@@ -349,14 +348,15 @@ function main() {
     }
     if (argv.s) {
         // ensure a valid year was passed
-        if (!NVDYearValidator(argv.full)) {
-            console.log(`Error: ${argv.full} is not a valid year to search by`);
+        if (!NVDYearValidator(argv.s)) {
+            console.log(`No year given for -s, default is ${defaultYearArg}`);
         } else {
-            if (argv.product) {
-                return productSearchHandler(argv.s, argv.product);
-            } else {
-                console.log(`Unsupported or no search type`);
-            }
+            defaultYearArg = argv.s;
+        }
+        if (argv.product) {
+            return productSearchHandler(defaultYearArg, argv.product);
+        } else {
+            console.log(`Unsupported or no search type`);
         }
     }
     // if no cammand arg is given, display the help section
