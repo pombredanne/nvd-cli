@@ -332,26 +332,3 @@ function main() {
 }
 
 main();                                                             // script starts here, args are processed before anything is done
-
-/*
-else if (process.argv[2] == '-f' || process.argv[2] == '--full') {
-    // check for a year arg as well, allow for up to 10 years ago
-    var yearArg = '2017';
-    if (process.argv[3]) {
-        yearArg = process.argv[3];
-        // verify the arg is a valid year (catch a lot of exceptions)
-        if (isNaN(yearArg) || yearArg.charAt(0) !== '2' || yearArg.charAt(1) !== '0' || yearArg.length < 4 || yearArg.length > 4) {
-            console.log(bright, `\n${yearArg} is not a valid year, the year arg should look something like this: 2017`);
-            console.log('\nExiting...');
-            console.log(reset, '');                                      // Reset the console color
-            process.exit(0);
-        } else {
-            return NVDCheckFull(yearArg);
-        }
-    } else {
-        console.log(bright, `\nNo year argument for full search, default is ${yearArg}`);
-        console.log(reset, '');                                      // Reset the console color
-        return NVDCheckFull(yearArg);
-    }
-}
-*/
