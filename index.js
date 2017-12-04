@@ -446,8 +446,11 @@ function main() {
             console.log(`Unsupported or no search type`);
         }
     }
+    if (argv.v || argv.version) {
+        console.log(`nvd-cli version: ${ver}`);
+    }
     // if no cammand arg is given, display the help section
-    if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
+    if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search && !argv.v && !argv.version) {
         console.log('Error: Please provide a task arg (-r, (--recent), -f (--full), -s (--search)');
         return helpInfo();
     }
