@@ -311,7 +311,7 @@ function productSearchHandler(yearToSearch, productSearchQuery, outputLocation, 
             .then((NVDData) => searchNVDProducts(NVDData, productSearchQuery))
             .then((affectedItemsArray) => {
                 if (outputFormat == '.pdf') {
-                    writePDFReport(affectedItemsArray, `SEARCH ${productSearchQuery} ${yearToSearch}`, outputName);
+                    writePDFReport(affectedItemsArray, `SEARCH '${productSearchQuery}' ${yearToSearch}`, outputName);
                 } else if (outputFormat == '.txt') {
                     console.log('.txt output not yet supported');
                 } else {
