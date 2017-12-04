@@ -239,6 +239,7 @@ function main() {
     var defaultOutputFormat = '.pdf';
     var defaultOutputName = './report';
     var defaultChecklistLoc = config.checklistName;
+    var defaultYearArg = '2017';
     // check through the args passed to decide what to do and arg values to reassign
 
     // if argv has help arg, return help, if help <command> is passed, return better helpmsg
@@ -303,14 +304,24 @@ function main() {
         return NVDCheckRecent(defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
     }
     if (argv.f) {
+        // ensure the -f arg has a year passed
+        if (typeof (argv.f) !== 'number') {
+            console.log(`Error: Please provide a year for -f to search by (EX: 2012)`)
+        } else {
+            // ensure a valid year was passed
+            if (isNaN(argv.f) || argv.f.toString().charAt(0) !== '2' || argv.f.toString().charAt(1) !== '0' || argv.f.length < 4 || argv.f.length > 4 || argv.f < 2003) {
+                console.log(`Error: ${argv.f} is not a valid year to search by`);
+            } else {
+                return NVDCheckFull(argv.f);
+            }
 
+        }
     }
     if (argv.full) {
 
     }
 
-
-    //if no cammand arg is given, display the help section
+    // if no cammand arg is given, display the help section
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
         console.log('Error: Please provide a task arg (-r, --recent, -f --full, -s --search');
         return helpInfo();
@@ -321,7 +332,8 @@ function main() {
 }
 
 main();                                                             // script starts here, args are processed before anything is done
-if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
+
+/*
 else if (process.argv[2] == '-f' || process.argv[2] == '--full') {
     // check for a year arg as well, allow for up to 10 years ago
     var yearArg = '2017';
@@ -342,3 +354,4 @@ else if (process.argv[2] == '-f' || process.argv[2] == '--full') {
         return NVDCheckFull(yearArg);
     }
 }
+*/
