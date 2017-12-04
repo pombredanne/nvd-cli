@@ -5,15 +5,12 @@ const util = require('util');                                   // for using chi
 const PDFDocument = require('pdfkit');
 const exec = require('child-process-promise').exec;
 var argv = require('minimist')(process.argv.slice(2));          // for parsing args
-console.log(argv);
-// custom requires
-const config = require('./config');                             // confiog file for script
+const config = require('./config');                             // config file for script
 const NVDClass = require('./lib/NVDJSONClass');                 // helper for getting at NVD Data for specific years
-
 const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 const bright = '\x1b[1m';
 const reset = '\x1b[0m';
-const debug = config.debug;
+const debug = config.debug;                                     // used to allow/disallow verbose logging
 const ver = '0.3.0';                                            // arbitrary version number, should match NPM version
 
 var globalNVDJSON;
@@ -341,6 +338,7 @@ function NVDYearValidator(yearToValidate) {
 
 // script starts here
 function main() {
+    if (debug) { console.log(argv); }
     if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
     // vars to hold arg values and their defaults
     var defaultOutputLocation = process.cwd();
@@ -349,8 +347,6 @@ function main() {
     var defaultChecklistLoc = config.checklistName;
     var defaultYearArg = '2017';
     // check through the args passed to decide what to do and arg values to reassign
-
-    // if argv has help arg, return help, if help <command> is passed, return better helpmsg
     if (argv.h || argv.help || argv._.indexOf('help') !== -1) {
         return helpInfo();
     }
@@ -436,7 +432,7 @@ function main() {
         if (argv.product) {
             return productSearchHandler(defaultYearArg, argv.product, defaultOutputLocation, defaultOutputFormat, defaultOutputName);
         } else {
-            console.log(`Unsupported or no search type`);
+            console.log(`Unsupported or no search type given`);
         }
     }
     if (argv.v || argv.version) {
