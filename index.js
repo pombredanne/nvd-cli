@@ -35,7 +35,7 @@ TODO: add params for every function that needs them
 TODO: fix the global JSON data issue that really shouldn't be there
 TODO: make this usable as an NPM command line util? (kind of like node-mailer CLI)
 TODO: create defaults for all arg types
-
+TODO: allow for better help args handling
 */
 
 function capitalizeFirstLetter(string) {                            //used to clean up some WF data 
@@ -251,9 +251,8 @@ function main() {
     }
     if (argv.c) {
         // check for a checklist valid file path
-        // validate the arg first
-        if (typeof (argv.c) !== 'string') {
-            console.log('Error: Please provide a string for the checklist file name');
+        if (typeof (argv.c) !== 'string') {                         // validate the arg first
+            console.log('Error: Please provide a string for the checklist file location (EX: ./checklist.json)');
             process.exit(0);
         } else {
             if (fs.existsSync(argv.c)) {
@@ -266,9 +265,8 @@ function main() {
     }
     if (argv.checklist) {
         // check for a checklist valid file path
-        // validate the arg first
-        if (typeof (argv.c) !== 'string') {
-            console.log('Error: Please provide a string for the checklist file name');
+        if (typeof (argv.checklist) !== 'string') {                         // validate the arg first            
+            console.log('Error: Please provide a string for the checklist file location (EX: ./checlist.json)');
             process.exit(0);
         } else {
             if (fs.existsSync(argv.checklist)) {
@@ -286,7 +284,7 @@ function main() {
     // in theory this can be a directory not just a file name --needs to be tested against
     if (argv.o) {
         if (typeof (argv.o) !== 'string') {                         // validate the arg first
-            console.log('Please provide a string for the output file name');
+            console.log('Error: Please provide a string for the output file name');
             process.exit(0);
         } else {
             defaultOutputName = argv.o;                             // assign the file output name/location to the passed arg somce it is valid
@@ -294,19 +292,19 @@ function main() {
     }
     if (argv.output) {
         if (typeof (argv.output) !== 'string') {
-            console.log('Please provide a string for the output file name');
+            console.log('Error: Please provide a string for the output file name');
             process.exit(0);
         } else {
             defaultOutputName = argv.output;
         }
     }
     if (argv.o && argv.output) {
-        console.log('Please only use -o or --output, not both!');
+        console.log('Error: Please only use -o or --output, not both!');
         process.exit(0);
     }
     // recent needs no extra arg checking
     if (argv.r || argv.recent || argv._.indexOf('recent') !== -1) {
-        return NVDCheckRecent(defaultOutputLocation, '.pdf', defaultChecklistLoc, defaultOutputName);
+        return NVDCheckRecent(defaultOutputLocation, defaultOutPutFormat, defaultChecklistLoc, defaultOutputName);
     }
     //if no cammand arg is given, display the help section
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
@@ -318,9 +316,8 @@ function main() {
 
 }
 
-// script starts here, args are processed before anything is done
 
-main();
+main();                                                             // script starts here, args are processed before anything is done
 if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
 else if (process.argv[2] == '-f' || process.argv[2] == '--full') {
     // check for a year arg as well, allow for up to 10 years ago
