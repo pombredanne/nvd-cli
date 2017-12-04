@@ -202,9 +202,7 @@ function writePDFReport(affectedItemsArray, timeArg, outputArg) {
     doc.font(config.defaultFontLocation);
     doc.text(`NVD ${timeArg} Vulnerability Check Report ${new Date().toDateString()}`, { align: 'center', stroke: true });
     doc.fontSize(12);
-    doc.moveDown();
-    doc.moveDown();
-    doc.text(`CVE data version: ${globalNVDJSON.CVE_data_version}`);
+    doc.text(`\n\nCVE data version: ${globalNVDJSON.CVE_data_version}`);
     doc.text(`CVE count: ${globalNVDJSON.CVE_data_numberOfCVEs}`);
     doc.text(`Last Updated: ${globalNVDJSON.CVE_data_timestamp}`);
     doc.text(`Checklist File: ${config.checklistName}`);
