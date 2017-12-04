@@ -28,7 +28,6 @@ TODO: allow for better help args handling
 TODO: make the NVDCheckFull/Recent one funtion (it's doable!)
 TODO: start documenting on github and the actual script what we already have
 TODO: add a vendor search option
-TODO: have the search look for non-exact matches!
 */
 
 function capitalizeFirstLetter(string) {                            // used to clean up some of the NVD names for products
@@ -312,7 +311,7 @@ function productSearchHandler(yearToSearch, productSearchQuery, outputLocation, 
             .then((NVDData) => searchNVDProducts(NVDData, productSearchQuery))
             .then((affectedItemsArray) => {
                 if (outputFormat == '.pdf') {
-                    writePDFReport(affectedItemsArray, `SEARCH ${yearToSearch}`, outputName);
+                    writePDFReport(affectedItemsArray, `SEARCH ${productSearchQuery} ${yearToSearch}`, outputName);
                 } else if (outputFormat == '.txt') {
                     console.log('.txt output not yet supported');
                 } else {
