@@ -20,13 +20,16 @@ npm install -g nvd-cli
 
 ## History
 
+- **0.3.1**
+    - `-s` now requires at least 3 characters to search by
+    - fixed HUGE issue where `-s` flag wasn't actually searching the passed year
+
+
 - **0.3.0**
     - `-s` functionality has been (mostly) implimented
     - `-v` flag will now show the version of nvd-cli installed
     - Najor improvment to code layout
     - Much more validation has been put in place
-
-
 
 - **0.2.0**
     - A new (better) argument handler is now in place
