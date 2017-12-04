@@ -18,8 +18,8 @@ const ver = '0.2.0';                                            // arbitrary ver
 
 var globalNVDJSON;
 /*
-simple script to get recent NVD JSON data from their CDN in a zip format
-unzip it and check against a set of manufacturers & software products to track vulnerabilites
+Script scope: To provide a command line utility for generating NVD vulnerability
+check reports based on a checklist of products
 
 Notes: 
 - the PDFkit way to get bold text is 'stroke' not bold
@@ -33,11 +33,12 @@ TODO: update project scope description
 TODO: for recents, ensure that the CVE review is FINAL?
 TODO: add params for every function that needs them
 TODO: fix the global JSON data issue that really shouldn't be there
-TODO: make this usable as an NPM command line util? (kind of like node-mailer CLI)
+TODO: make this usable as an NPM command line util! (kind of like node-mailer CLI)
 TODO: create defaults for all arg types
 TODO: allow for better help args handling
 TODO move validations for -f and -s to their own functions
 TODO: make the NVDCheckFull/Recent one funtion (it's doable!)
+TODO: start documenting on github and the actual script what we already have
 */
 
 function capitalizeFirstLetter(string) {                            // used to clean up some of the NVD names for products
@@ -240,8 +241,13 @@ function helpInfo() {
                                         vulnerabilities found in the <year> arg passed`);
 }
 
-function searchHandler(searchQuery) {
-    console.log(searchQuery);
+//TODO: eventually allow for a year arg to be passed
+function productSearchHandler(productSearchQuery) {
+    if(typeof(productSearchQuery) !== 'string') {
+        return console.log('Error: Product search term must be a string')
+    } else {
+        //return the actualy function
+    }
 }
 
 // script starts here
@@ -342,11 +348,9 @@ function main() {
             }
         }
     } 
-    if (argv.s) {
-        return searchHandler(argv.s);
-    }
-    if (argv.search) {
-        return searchHandler(argv.s);
+
+    if (argv.product) {
+        return productSearchHandler(argv.product);
     }
     // if no cammand arg is given, display the help section
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
