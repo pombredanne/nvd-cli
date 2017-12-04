@@ -28,15 +28,13 @@ Notes:
 TODO: Allow for vulerability severity arg (IE Ignore 'LOW' scoring entries that match)
 TODO: create a CLI search functionality (search for a product vulnerability or vendor list)
 TODO: when done, work on README
-TODO: add filename handler for the PDF/TXT and the type of file to generate
+TODO: add output type option for reports (.txt or .PDF)
 TODO: update project scope description
 TODO: for recents, ensure that the CVE review is FINAL?
 TODO: add params for every function that needs them
 TODO: fix the global JSON data issue that really shouldn't be there
 TODO: make this usable as an NPM command line util! (kind of like node-mailer CLI)
-TODO: create defaults for all arg types
 TODO: allow for better help args handling
-TODO move validations for -f and -s to their own functions
 TODO: make the NVDCheckFull/Recent one funtion (it's doable!)
 TODO: start documenting on github and the actual script what we already have
 */
@@ -241,7 +239,6 @@ function helpInfo() {
                                         vulnerabilities found in the <year> arg passed`);
 }
 
-//TODO: eventually allow for a year arg to be passed
 function productSearchHandler(yearToSearch, productSearchQuery) {
     if (typeof (productSearchQuery) !== 'string') {
         return console.log('Error: Product search term must be a string');
