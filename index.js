@@ -38,7 +38,7 @@ TODO: create defaults for all arg types
 TODO: allow for better help args handling
 */
 
-function capitalizeFirstLetter(string) {                            //used to clean up some WF data 
+function capitalizeFirstLetter(string) {                            // used to clean up some of the NVD names for products
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
@@ -231,10 +231,6 @@ function helpInfo() {
                                         vulnerabilities found in the <year> arg passed`);
 }
 
-function handleOutPutArg() {
-
-}
-
 // script will eventually start here
 function main() {
     if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
@@ -306,6 +302,12 @@ function main() {
     if (argv.r || argv.recent || argv._.indexOf('recent') !== -1) {
         return NVDCheckRecent(defaultOutputLocation, defaultOutPutFormat, defaultChecklistLoc, defaultOutputName);
     }
+    if(argv.f) {
+
+    }
+    if(argv.full )
+
+
     //if no cammand arg is given, display the help section
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
         console.log('Error: Please provide a task arg (-r, --recent, -f --full, -s --search');
@@ -315,7 +317,6 @@ function main() {
     // if arg is -s, search for a the string in the year arg passed
 
 }
-
 
 main();                                                             // script starts here, args are processed before anything is done
 if (debug) { console.log(`\nNVD Vulnerability Check Script Started on ${new Date().toISOString()}\n`); }
