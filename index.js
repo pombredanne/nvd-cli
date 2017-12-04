@@ -33,8 +33,6 @@ TODO: update project scope description
 TODO: for recents, ensure that the CVE review is FINAL?
 TODO: add params for every function that needs them
 TODO: fix the global JSON data issue that really shouldn't be there
-TODO: allow for a checklist file arg to be passed
-TODO: allow for output location
 TODO: make this usable as an NPM command line util? (kind of like node-mailer CLI)
 TODO: create defaults for all arg types
 
@@ -345,8 +343,4 @@ else if (process.argv[2] == '-f' || process.argv[2] == '--full') {
         console.log(reset, '');                                      // Reset the console color
         return NVDCheckFull(yearArg);
     }
-} else if (argv.h || process.argv[2] == '--help' || process.argv[2] == 'help') {
-    return helpInfo();
-} else {
-    // return helpInfo();                                              // Display help information since nothing was passed
 }
