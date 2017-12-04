@@ -48,10 +48,12 @@ Usage: nvd-cli <primary flag> <primary flag arg> [optional flags]
 
 ## History
 
+- **0.3.2**
+    - Updated help info to be actually useful
+
 - **0.3.1**
     - `-s` now requires at least 3 characters to search by
     - fixed HUGE issue where `-s` flag wasn't actually searching the passed year
-
 
 - **0.3.0**
     - `-s` functionality has been (mostly) implimented
