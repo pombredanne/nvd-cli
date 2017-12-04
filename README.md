@@ -38,7 +38,7 @@ Usage: nvd-cli <primary flag> <primary flag arg> [optional flags]
 
 -h, --help, help      Display this help text or try -h <command>
 
--v, --version          Get the version of nvd-cli you are currently running
+-v, --version         Get the version of nvd-cli you are currently running
 
 ```
 
