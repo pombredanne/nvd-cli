@@ -27,9 +27,7 @@ Notes:
 
 TODO: Allow for vulerability severity arg (IE Ignore 'LOW' scoring entries that match)
 TODO: create a CLI search functionality (search for a product vulnerability or vendor list)
-TODO: when done, work on README
 TODO: add output type option for reports (.txt or .PDF)
-TODO: update project scope description
 TODO: for recents, ensure that the CVE review is FINAL?
 TODO: add params for every function that needs them
 TODO: fix the global JSON data issue that really shouldn't be there
@@ -132,6 +130,71 @@ function parseNVDData(NVDObjArray) {
     });
     console.log(`Number of matches found: ${affectedItems.length}`);
     return affectedItems;
+}
+function searchNVDProducts(NVDObjArray, productSearchQuery) {
+    console.log(`CVE data version: ${NVDObjArray.CVE_data_version}`);
+    console.log(`CVE count: ${NVDObjArray.CVE_data_numberOfCVEs}`);
+    console.log(`Last Updated: ${NVDObjArray.CVE_data_timestamp}`);
+    var matches = [];
+    NVDObjArray.CVE_Items.forEach((entry, index) => {
+        var affectedItem = {};
+        entry.cve.affects.vendor.vendor_data.forEach((entryV, indexV) => {
+            // check against the list of product to match
+            entryV.product.product_data.forEach((product, productIndex) => {
+                if (product.product_name == productSearchQuery.toLowerCase()) {
+                    if (debug) { console.log(entry); }
+                    var versionsAffected = [];
+                    var referenceURLs = [];
+                    entryV.product.product_data[0].version.version_data.forEach((version) => {
+                        versionsAffected.push(version.version_value);
+                    });
+                    if (entry.cve.hasOwnProperty('references')) {
+                        entry.cve.references.reference_data.forEach((ref, refIndex) => {
+                            referenceURLs.push(ref.url);
+                        });
+                    }
+                    // push all of the data to an the affectedItem Obj
+                    affectedItem.ID = entry.cve.CVE_data_meta.ID;
+                    affectedItem.vendorName = entryV.vendor_name;
+                    affectedItem.productName = entryV.product.product_data[0].product_name;
+                    affectedItem.publishedDate = entry.publishedDate;
+                    affectedItem.lastModifiedDate = entry.lastModifiedDate;
+                    affectedItem.vulnerabilityDescription = entry.cve.description.description_data[0].value;
+                    affectedItem.versionsAffected = versionsAffected;
+                    affectedItem.referenceURLs = referenceURLs
+                    // validate that v3 exists
+                    if (entry.impact.hasOwnProperty('baseMetricV3')) {
+                        affectedItem.v3SeverityScore = {
+                            severity: entry.impact.baseMetricV3.cvssV3.baseSeverity,
+                            scoreString: entry.impact.baseMetricV3.cvssV3.baseScore
+                        }
+                        affectedItem.attackVector = entry.impact.baseMetricV3.cvssV3.attackVector;
+                    } else {
+                        affectedItem.v3SeverityScore = {
+                            severity: 'NONE',
+                            scoreString: 'NONE'
+                        }
+                    }
+                    // Do the same for v2
+                    if (entry.impact.hasOwnProperty('baseMetricV2')) {
+                        affectedItem.v2SeverityScore = {
+                            severity: entry.impact.baseMetricV2.severity,
+                            scoreString: entry.impact.baseMetricV2.cvssV2.baseScore
+                        }
+                    } else {
+                        affectedItem.v2SeverityScore = {
+                            severity: 'NONE',
+                            scoreString: 'NONE'
+                        }
+                    }
+                    // push the affected item to the array to return
+                    matches.push(affectedItem);
+                }
+            });
+        });
+    });
+    console.log(`Number of matches found: ${matches.length}`);
+    return matches;
 }
 
 function writePDFReport(affectedItemsArray, timeArg, outputArg) {
@@ -239,11 +302,37 @@ function helpInfo() {
                                         vulnerabilities found in the <year> arg passed`);
 }
 
-function productSearchHandler(yearToSearch, productSearchQuery) {
+function productSearchHandler(yearToSearch, productSearchQuery, outputLocation, outputFormat, checklistLocation, outputName) {
     if (typeof (productSearchQuery) !== 'string') {
         return console.log('Error: Product search term must be a string');
     } else {
-        
+        // parse the provided year for products that match the query given
+        // first get the data like the other NVDChecks
+        Promise.resolve()                                               // start the promise chain as resolved to avoid issues
+            .then(() => getNVDZipFile(config.NVDURLRecent, config.zipFileNameRecent))        // Get the RECENT json that is in .zip format
+            .then(() => extractZipFile(config.zipFileNameRecent))
+            .then(() => {
+                let NVDJSON = fs.readFileSync(config.NVDJSONFileNameRecent, 'utf-8');
+                let parsedNVDData = JSON.parse(NVDJSON);
+                globalNVDJSON = parsedNVDData;                          // used to allow the PDF file acess to certain data
+                return parsedNVDData;
+            })
+            .then((NVDData) => searchNVDProducts(NVDData, productSearchQuery))
+            .then((affectedItemsArray) => {
+                if (outputFormat == '.pdf') {
+                    writePDFReport(affectedItemsArray, 'SEARCH', outputName);
+                } else if (outputFormat == '.txt') {
+                    console.log('.txt output not yet supported');
+                } else {
+                    throw new Error('Error: Unknown output format was passed to function NVDCheckRecent');
+                }
+            })
+            .then(() => {
+                if (debug) { console.log(`\nSuccessfully ended on ${new Date().toISOString()}`); }
+            })
+            .catch((err) => {
+                console.log(`Ended with error at ${new Date().toISOString()}: ${err}`);
+            })
     }
 }
 
@@ -354,7 +443,7 @@ function main() {
             defaultYearArg = argv.s;
         }
         if (argv.product) {
-            return productSearchHandler(defaultYearArg, argv.product);
+            return productSearchHandler(defaultYearArg, argv.product, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
         } else {
             console.log(`Unsupported or no search type`);
         }
