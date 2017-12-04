@@ -4,6 +4,14 @@
 
 ## Installation
 
+You can install this cli program via npm:
+
+```
+npm install -g nvd-cli
+```
+
+**NOTE: THis project will NOT be on npm until Beta 0.4**
+
 ## Usage
 
 ## Configuring
