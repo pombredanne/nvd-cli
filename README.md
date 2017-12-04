@@ -14,6 +14,19 @@ npm install -g nvd-cli
 
 ## Usage
 
+```
+$ nvd-cli --help
+
+Usage: nvd-cli <primary flag> <primary flag arg> [optional flags]
+
+-f, --full <year>     Conduct a full search against the default or provided 
+                      checklist for a given <year>
+                      
+-r, --recent          Search for vulnerabilaties in the NVD recent category using default 
+                      or provided checklist
+
+```
+
 ## Configuring
 
 ## Checklist Schema
