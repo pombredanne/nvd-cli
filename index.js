@@ -36,10 +36,8 @@ TODO: fix the global JSON data issue that really shouldn't be there
 TODO: allow for a checklist file arg to be passed
 TODO: allow for output location
 TODO: make this usable as an NPM command line util? (kind of like node-mailer CLI)
-TODO: create a more sacalable arg system
 TODO: create defaults for all arg types
-TODO: REAAAAAAALLLLLLLLLLY work on getting a way to redirect the output location AND the name
-not just the name!
+
 */
 
 function capitalizeFirstLetter(string) {                            //used to clean up some WF data 
@@ -245,7 +243,7 @@ function main() {
     // vars to hold arg values and their defaults
     var defaultOutputLocation = process.cwd();
     var defaultOutPutFormat = '.pdf';
-    var defaultOutputName = 'report';
+    var defaultOutputName = '../report';
     var defaultChecklistLoc = config.checklistName;
     // check through the args passed to decide what to do and arg values to reassign
 
@@ -257,7 +255,7 @@ function main() {
         // check for a checklist valid file path
         // validate the arg first
         if (typeof (argv.c) !== 'string') {
-            console.log('Error: Please provide a string for the output file name');
+            console.log('Error: Please provide a string for the checklist file name');
             process.exit(0);
         } else {
             if (fs.existsSync(argv.c)) {
@@ -272,7 +270,7 @@ function main() {
         // check for a checklist valid file path
         // validate the arg first
         if (typeof (argv.c) !== 'string') {
-            console.log('Error: Please provide a string for the output file name');
+            console.log('Error: Please provide a string for the checklist file name');
             process.exit(0);
         } else {
             if (fs.existsSync(argv.checklist)) {
@@ -288,6 +286,7 @@ function main() {
         process.exit(0);
     }
     //TODO: clean the file name output renames to not have invalid chars
+    // in theory this can be a directory not just a file name --needs to be tested against
     if (argv.o) {
         // change the output name
         // validate the arg first
@@ -314,7 +313,7 @@ function main() {
     }
 
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search) {
-        console.log('Please provide a task arg (-r, --recent, -f --full, -s --search');
+        console.log('Error: Please provide a task arg (-r, --recent, -f --full, -s --search');
         return helpInfo();
     }
     // if arg is -f, get FULL data for a year that was passed
