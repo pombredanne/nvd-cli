@@ -21,10 +21,6 @@ var globalNVDJSON;
 Script scope: To provide a command line utility for generating NVD vulnerability
 check reports based on a checklist of products
 
-Notes: 
-- the PDFkit way to get bold text is 'stroke' not bold
-- for PDFKit, doc.moveDown and \n being in the string do the same thing
-
 TODO: Allow for vulerability severity arg (IE Ignore 'LOW' scoring entries that match)
 TODO: add output type option for reports (.txt or .PDF)
 TODO: for recents, ensure that the CVE review is FINAL?
