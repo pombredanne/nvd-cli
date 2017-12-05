@@ -11,7 +11,7 @@ const swChecklist = JSON.parse(fs.readFileSync(config.checklistName, 'utf-8'));
 const bright = '\x1b[1m';
 const reset = '\x1b[0m';
 const debug = config.debug;                                     // used to allow/disallow verbose logging
-const ver = '0.3.5';                                            // arbitrary version number, should match NPM version
+const ver = '0.4.0';                                            // arbitrary version number, should match NPM version
 
 var globalNVDJSON;
 /*
@@ -341,7 +341,7 @@ function helpInfo() {                                               // NOTE: thi
     
     -v, --version         Get the version of nvd-cli you are currently running
 
-    
+
     For more help on a specific command/arg type help <command> without the '-' or '--'
     `);
 }
