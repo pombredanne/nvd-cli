@@ -1,6 +1,13 @@
 # nvd-cli
 
-**This project is currently in BETA.. please stand by...**
+**NOTE: This project is currently in BETA.. please stand by...**
+
+This project is designed to assist with searching the National Vulnerability Database 
+[NVD](https://nvd.nist.gov/) and getting vulnerability info for the products that matter to **you**
+
+If there's errors or anything like that, feel free to put up and issue or contact me personally.
+This is a personal project of sorts but I know how useful it can be
+
 
 ## Installation
 
@@ -42,13 +49,44 @@ Usage: nvd-cli <primary flag> <primary flag arg> [optional flags]
 
 -v, --version         Get the version of nvd-cli you are currently running
 
+
+For more help on a specific command/arg type help <command> without the '-' or '--'
+
 ```
 
 ## Configuring
 
 ## Checklist Schema
 
+**NOTE: The default checklist.json is just used for testing!!**
+
+When providing a checklist, the .json file should look something like this:
+
+```
+
+[
+    {
+        "manufacturerName": "nodejs",
+        "softwareName": "node.js"
+    },
+    {
+        "manufacturerName": "microsoft",
+        "softwareName": "windows_xp"
+    },
+    {
+        "manufacturerName": "redhat",
+        "softwareName": "enterprise_linux"
+    }
+]
+
+```
+
 ## History
+
+- **0.4.0**
+    - Added the `help <command>` functionality. There's likely typos/errors. If you find any let me know
+    - Updated the `-h (--help)` information
+
 
 - **0.3.5**
     - Added the `-t (--type)` optional flag for changing the output type
