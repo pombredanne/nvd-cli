@@ -331,6 +331,8 @@ function helpInfo() {                                               // NOTE: thi
     -o, --output          Change the nvd-cli output file name and/or location
     
     -c, --checklist       Change the nvd-cli checklist file name and/or location
+
+    -t, --type            Change the output type for the NVD report (.pdf or .txt)
     
     - MISC PARAMETERS -
     
