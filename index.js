@@ -455,10 +455,25 @@ function main() {
         process.exit(0);
     }
     if (argv.t) {
-        defaultOutputFormat = argv.t;
+        if (argv.t == '.txt') {
+            defaultOutputFormat = argv.t;
+        } else if (argv.t == '.pdf') {
+            defaultOutputFormat = argv.t;
+        } else {
+            return console.log(`Error: Please provide a valid -t arg: .txt OR .pdf`);
+        }
     }
     if (argv.type) {
-        defaultOutputFormat = argv.type;
+        if (argv.type == '.txt') {
+            defaultOutputFormat = argv.type;
+        } else if (argv.type == '.pdf') {
+            defaultOutputFormat = argv.type;
+        } else {
+            return console.log(`Error: Please provide a valid -type arg: .txt OR .pdf`);
+        }
+    }
+    if (argv.t && argv.type) {
+        return console.log('Error: Please only use -t or --type, not both!');
     }
     // recent needs no extra arg checking
     if (argv.r || argv.recent || argv._.indexOf('recent') !== -1) {
