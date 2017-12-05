@@ -27,6 +27,7 @@ TODO: allow for better help args handling
 TODO: make the NVDCheckFull/Recent one funtion (it's doable!)
 TODO: add a vendor search option
 TODO: add more of the NVD data to the objects in parseNVDData
+TODO combine the long and shorthand for each command/arg/flag type
 */
 
 function capitalizeFirstLetter(string) {                            // used to clean up some of the NVD names for products
@@ -339,6 +340,9 @@ function helpInfo() {                                               // NOTE: thi
     -h, --help, help      Display this help text or try -h <command>
     
     -v, --version         Get the version of nvd-cli you are currently running
+
+    
+    For more help on a specific command/arg type help <command> without the '-' or '--'
     `);
 }
 
@@ -356,21 +360,47 @@ function helpCommandHandler(helpArg) {
         case 'f':
         case 'full':
             console.log(`
-        Usage: -f, --full, <year to fully search> [optional parameters]
+    Usage: -f, --full, <year to fully search> [optional parameters]
     
-        Description:        Get FULL NVD data for a given year matching the 
-                            default or provided checklist and write the report to a file
+    Description:        Get FULL NVD data for a given year matching the 
+                        default or provided checklist and write the report to a file
                 `);
             break;
-            case 's':
-            case 's':
-                console.log(`
-            Usage: -s, --s, <year to search> --<product_name> [optional parameters]
+        case 's':
+        case 'search':
+            console.log(`
+    Usage: -s, --s, <year to search> --<product_name> [optional parameters]
         
-            Description:        Get FULL NVD data for a given year matching the 
-                                default or provided checklist and write the report to a file
+    Description:        Get NVD data for a given year that matches the 
+                        <product_name> string
                     `);
-                break;
+            break;
+        case 'c':
+        case 'checklist':
+            console.log(`
+    Usage: <command> -c, --checklist <checklist_file_location>
+            
+    Description:        Specify a custom checklist other than the
+                        default './checklist.json'
+                        `);
+            break;
+        case 'o':
+        case 'output':
+            console.log(`
+    Usage: <command> -o, --output <custom_output_dir/file_name>
+                
+    Description:        Specify a report location and file name other
+                        than the default './report.pdf'
+                            `);
+            break;
+        case 't':
+        case 'type':
+            console.log(`
+    Usage: <command> -t, --type <file_type_to_generate>
+                    
+    Description:        Change the report type to be either .txt or .pdf
+                                `);
+            break;
         default:
             console.log(`${helpArg} isn't recognized as a command, option or flag`);
             break;
