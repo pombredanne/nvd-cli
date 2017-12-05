@@ -122,6 +122,7 @@ function parseNVDData(NVDObjArray) {
     console.log(`Number of matches found: ${affectedItems.length}`);
     return affectedItems;
 }
+
 function searchNVDProducts(NVDObjArray, productSearchQuery) {
     console.log(`CVE data version: ${NVDObjArray.CVE_data_version}`);
     console.log(`CVE count: ${NVDObjArray.CVE_data_numberOfCVEs}`);
@@ -222,14 +223,32 @@ function writePDFReport(affectedItemsArray, timeArg, outputArg) {
 }
 
 function writeTextReport(affectedItemsArray, timeArg, outputArg) {
-    // generate a .txt document similar to writePDFReport but text based
     var textData = '';
     // this is a hacky way to do it but text docs are hacky as it is.
     textData = textData + `NVD ${timeArg} Vulnerability Check Report ${new Date().toDateString()}`;
+    textData = textData + `\n\nCVE data version: ${globalNVDJSON.CVE_data_version}`;
+    textData = textData + `\nCVE count: ${globalNVDJSON.CVE_data_numberOfCVEs}`;
+    textData = textData + `\nLast Updated: ${globalNVDJSON.CVE_data_timestamp}`;
+    textData = textData + `\nChecklist File: ${config.checklistName}`;
+    textData = textData + `\nNumber of Vulnerabilites Matched: ${affectedItemsArray.length}`;
+    textData = textData + `\n\n`;                                   // Extra spacing before iterating through the array
+    // get each affected item's data and format it
+    affectedItemsArray.forEach((entry, index) => {
+        textData = textData + `\n${capitalizeFirstLetter(entry.vendorName)} ${capitalizeFirstLetter(entry.productName)} (${entry.ID})`;
+        textData = textData + `\nPublished: ${entry.publishedDate}    Modified: ${entry.lastModifiedDate}`;
+        textData = textData + `\nVersions Affected: ${entry.versionsAffected.join(', ')}`;
+        textData = textData + `\nAttack Vector: ${entry.attackVector}`;
+        textData = textData + `\nDescription: ${entry.vulnerabilityDescription}`;
+        textData = textData + `\nV3 Score: ${entry.v3SeverityScore.severity} (${entry.v3SeverityScore.scoreString})`;
+        textData = textData + `\nV2 Score: ${entry.v2SeverityScore.severity} (${entry.v2SeverityScore.scoreString})`;
+        textData = textData + `\nReferences:\n`;
+        textData = textData + `${entry.referenceURLs.join('\n')}`;
+        textData = textData + `\n`;                             // Allow for some whitespace in between entries
+    });
+    textData = textData + `\n\n\nEnd of File`;                  // Make sure the entire array was iterated through
 
     fs.writeFileSync(`${outputArg}.txt`, textData);
     console.log(`Wrote report as ${outputArg}.txt`);
-    
 }
 
 function NVDCheckFull(yearToSearch, outputLocation, outputFormat, checklistLocation, outputName) {
