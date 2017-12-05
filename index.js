@@ -320,7 +320,7 @@ function helpInfo() {                                               // NOTE: thi
     -f, --full            Conduct a full search against the default or provided 
                           checklist for a given <year> arg
     
-    -r, --recent          Search for vulnerabilaties in the NVD recent category using default 
+    -r, --recent, recent  Search for vulnerabilaties in the NVD recent category using default 
                           or provided checklist
     
     -s, --search          Specifically search for an NVD vulnerability matching the providded 
@@ -340,6 +340,41 @@ function helpInfo() {                                               // NOTE: thi
     
     -v, --version         Get the version of nvd-cli you are currently running
     `);
+}
+
+function helpCommandHandler(helpArg) {
+    switch (helpArg) {
+        case 'r':
+        case 'recent':
+            console.log(`
+    Usage: -r, --recent, recent, [optional parameters]
+
+    Description:        Get RECENT NVD data matching the default or provided
+                        checklist and write the report to a file
+            `);
+            break;
+        case 'f':
+        case 'full':
+            console.log(`
+        Usage: -f, --full, <year to fully search> [optional parameters]
+    
+        Description:        Get FULL NVD data for a given year matching the 
+                            default or provided checklist and write the report to a file
+                `);
+            break;
+            case 's':
+            case 's':
+                console.log(`
+            Usage: -s, --s, <year to search> --<product_name> [optional parameters]
+        
+            Description:        Get FULL NVD data for a given year matching the 
+                                default or provided checklist and write the report to a file
+                    `);
+                break;
+        default:
+            console.log(`${helpArg} isn't recognized as a command, option or flag`);
+            break;
+    }
 }
 
 function productSearchHandler(yearToSearch, productSearchQuery, outputLocation, outputFormat, outputName) {
@@ -401,8 +436,16 @@ function main() {
     var defaultChecklistLoc = config.checklistName;
     var defaultYearArg = '2017';
     // check through the args passed to decide what to do and arg values to reassign
-    if (argv.h || argv.help || argv._.indexOf('help') !== -1) {
+    if (argv.h || argv.help) {
         return helpInfo();
+    }
+    // help <commad> handler 
+    if (argv._.indexOf('help') !== -1) {
+        // determine which command was passed
+        if (argv._.length > 1) {
+            return helpCommandHandler(argv._[1].trim());
+        }
+        return console.log(`Error: Please provide a command to get help with (Ex: help <command> or help [arg flag]\n\nMake sure you don't include the '-' or '--' prefix with to commands and flags`);
     }
     if (argv.c) {
         // check for a checklist valid file path
@@ -503,7 +546,7 @@ function main() {
         return console.log(`nvd-cli version: ${ver}`);
     }
     // if no cammand arg is given, display the help section
-    if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search && !argv.v && !argv.version) {
+    if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search && !argv.v && !argv.version && argv._.indexOf('help') == -1) {
         console.log('Error: Please provide a task arg (-r, (--recent), -f (--full), -s (--search)');
         return helpInfo();
     }
