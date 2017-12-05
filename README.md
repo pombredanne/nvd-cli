@@ -8,6 +8,8 @@ This project is designed to assist with searching the National Vulnerability Dat
 If there's errors or anything like that, feel free to put up and issue or contact me personally.
 This is a personal project of sorts but I know how useful it can be
 
+Please be patient since this will be the first npm cli-type project I've worked on. I'll be testing as I can
+
 
 ## Installation
 
@@ -16,8 +18,6 @@ You can install this cli program via npm:
 ```
 npm install -g nvd-cli
 ```
-
-**NOTE: THis project will NOT be on npm until Beta 0.4**
 
 ## Usage
 
@@ -56,6 +56,8 @@ For more help on a specific command/arg type help <command> without the '-' or '
 
 ## Configuring
 
+Where `npm` installs your global packages, you will find 
+
 ## Checklist Schema
 
 **NOTE: The default checklist.json is just used for testing!!**
@@ -86,6 +88,7 @@ When providing a checklist, the .json file should look something like this:
 - **0.4.0**
     - Added the `help <command>` functionality. There's likely typos/errors. If you find any let me know
     - Updated the `-h (--help)` information
+    - Project is now up on `npm`
 
 
 - **0.3.5**
