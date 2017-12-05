@@ -19,7 +19,6 @@ Script scope: To provide a command line utility for generating NVD vulnerability
 check reports based on a checklist of products
 
 TODO: Allow for vulerability severity arg (IE Ignore 'LOW' scoring entries that match)
-TODO: add output type option for reports (.txt or .PDF)
 TODO: for recents, ensure that the CVE review is FINAL?
 TODO: add params for every function that needs them
 TODO: fix the global JSON data issue that really shouldn't be there
@@ -27,6 +26,7 @@ TODO: make this usable as an NPM command line util! (kind of like node-mailer CL
 TODO: allow for better help args handling
 TODO: make the NVDCheckFull/Recent one funtion (it's doable!)
 TODO: add a vendor search option
+TODO: add more of the NVD data to the objects in parseNVDData
 */
 
 function capitalizeFirstLetter(string) {                            // used to clean up some of the NVD names for products
