@@ -3,7 +3,7 @@
 **NOTE: This project is currently in BETA.. please stand by...**
 
 This project is designed to assist with searching the National Vulnerability Database 
-[NVD](https://nvd.nist.gov/) and getting vulnerability info for the products that matter to **you**
+([NVD](https://nvd.nist.gov/)) and getting vulnerability info for the products that matter to **you**
 
 If there's errors or anything like that, feel free to put up and issue or contact me personally.
 This is a personal project of sorts but I know how useful it can be
@@ -56,7 +56,7 @@ For more help on a specific command/arg type help <command> without the '-' or '
 
 ## Configuring
 
-Where `npm` installs your global packages, you will find 
+TODO: Add configuration info
 
 ## Checklist Schema
 
