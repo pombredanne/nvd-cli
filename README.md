@@ -2,6 +2,8 @@
 
 **NOTE: This project is currently in BETA.. please stand by...**
 
+**NOTE: !!!!!!!!!!!!!!!!!Due to an issue this is not on npm, expect a fix by tomorrow**
+
 This project is designed to assist with searching the National Vulnerability Database 
 ([NVD](https://nvd.nist.gov/)) and getting vulnerability info for the products that matter to **you**
 
