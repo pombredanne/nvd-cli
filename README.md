@@ -34,6 +34,8 @@ Usage: nvd-cli <primary flag> <primary flag arg> [optional flags]
 
 -c, --checklist       Change the nvd-cli checklist file name and/or location
 
+-t, --type            Change the output type for the NVD report (.pdf or .txt)
+
 - MISC PARAMETERS -
 
 -h, --help, help      Display this help text or try -h <command>
@@ -47,6 +49,10 @@ Usage: nvd-cli <primary flag> <primary flag arg> [optional flags]
 ## Checklist Schema
 
 ## History
+
+- **0.3.5**
+    - Added the `-t (--type)` optional flag for changing the output type
+    - Changed the arg validations slightly, reducing the number of pre-run checks
 
 - **0.3.2**
     - Updated help info to be actually useful
