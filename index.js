@@ -26,7 +26,6 @@ TODO: fix the global JSON data issue that really shouldn't be there
 TODO: make this usable as an NPM command line util! (kind of like node-mailer CLI)
 TODO: allow for better help args handling
 TODO: make the NVDCheckFull/Recent one funtion (it's doable!)
-TODO: start documenting on github and the actual script what we already have
 TODO: add a vendor search option
 */
 
@@ -222,6 +221,17 @@ function writePDFReport(affectedItemsArray, timeArg, outputArg) {
     console.log(`Wrote report as ${outputArg}.pdf`);
 }
 
+function writeTextReport(affectedItemsArray, timeArg, outputArg) {
+    // generate a .txt document similar to writePDFReport but text based
+    var textData = '';
+    // this is a hacky way to do it but text docs are hacky as it is.
+    textData = textData + `NVD ${timeArg} Vulnerability Check Report ${new Date().toDateString()}`;
+
+    fs.writeFileSync(`${outputArg}.txt`, textData);
+    console.log(`Wrote report as ${outputArg}.txt`);
+    
+}
+
 function NVDCheckFull(yearToSearch, outputLocation, outputFormat, checklistLocation, outputName) {
     let NVDFileData = new NVDClass(yearToSearch);                   // generate the new NVDData references to work with
     console.log(`Getting NVD FULL data to compare against ${checklistLocation}`);
@@ -239,7 +249,7 @@ function NVDCheckFull(yearToSearch, outputLocation, outputFormat, checklistLocat
             if (outputFormat == '.pdf') {
                 writePDFReport(affectedItemsArray, yearToSearch, outputName);
             } else if (outputFormat == '.txt') {
-                console.log('.txt output not yet supported');
+                writeTextReport(affectedItemsArray, yearToSearch, outputName);
             } else {
                 throw new Error('Error: Unknown output format was passed to function NVDCheckRecent');
             }
@@ -268,7 +278,7 @@ function NVDCheckRecent(outputLocation, outputFormat, checklistLocation, outputN
             if (outputFormat == '.pdf') {
                 writePDFReport(affectedItemsArray, 'RECENT', outputName);
             } else if (outputFormat == '.txt') {
-                console.log('.txt output not yet supported');
+                writeTextReport(affectedItemsArray, 'RECENT', outputName);
             } else {
                 throw new Error('Error: Unknown output format was passed to function NVDCheckRecent');
             }
@@ -334,7 +344,7 @@ function productSearchHandler(yearToSearch, productSearchQuery, outputLocation, 
                 if (outputFormat == '.pdf') {
                     writePDFReport(affectedItemsArray, `SEARCH '${productSearchQuery}' ${yearToSearch}`, outputName);
                 } else if (outputFormat == '.txt') {
-                    console.log('.txt output not yet supported');
+                    writeTextReport(affectedItemsArray, `SEARCH '${productSearchQuery}' ${yearToSearch}`, outputName)
                 } else {
                     throw new Error('Error: Unknown output format was passed to function NVDCheckRecent');
                 }
@@ -424,6 +434,12 @@ function main() {
     if (argv.o && argv.output) {
         console.log('Error: Please only use -o or --output, not both!');
         process.exit(0);
+    }
+    if (argv.t) {
+        defaultOutputFormat = argv.t;
+    }
+    if (argv.type) {
+        defaultOutputFormat = argv.type;
     }
     // recent needs no extra arg checking
     if (argv.r || argv.recent || argv._.indexOf('recent') !== -1) {
