@@ -405,54 +405,44 @@ function main() {
     if (argv.c) {
         // check for a checklist valid file path
         if (typeof (argv.c) !== 'string') {                         // validate the arg first
-            console.log('Error: Please provide a string for the checklist file location (EX: ./checklist.json)');
-            process.exit(0);
+            return console.log('Error: Please provide a string for the checklist file location (EX: ./checklist.json)');
         } else {
             if (fs.existsSync(argv.c)) {
                 defaultChecklistLoc = argv.c;
             } else {
-                console.log(`Error: ${argv.c} is not a valid location`);
-                process.exit(0);
+                return console.log(`Error: ${argv.c} is not a valid location`);
             }
         }
     }
     if (argv.checklist) {
         // check for a checklist valid file path
         if (typeof (argv.checklist) !== 'string') {                         // validate the arg first            
-            console.log('Error: Please provide a string for the checklist file location (EX: ./checlist.json)');
-            process.exit(0);
+            return console.log('Error: Please provide a string for the checklist file location (EX: ./checlist.json)');
         } else {
             if (fs.existsSync(argv.checklist)) {
                 defaultChecklistLoc = argv.checklist;
             } else {
-                console.log(`Error: ${argv.checklist} is not a valid location`);
-                process.exit(0);
+                return console.log(`Error: ${argv.checklist} is not a valid location`);
             }
         }
     }
     if (argv.c && argv.checklist) {
-        console.log('Error: Please only use -c or --checklist, not both!');
-        process.exit(0);
+        return console.log('Error: Please only use -c or --checklist, not both!');
     }
     if (argv.o) {
         if (typeof (argv.o) !== 'string') {                         // validate the arg first
-            console.log('Error: Please provide a string for the output file name');
-            process.exit(0);
-        } else {
-            defaultOutputName = argv.o;                             // assign the file output name/location to the passed arg somce it is valid
+            return console.log('Error: Please provide a string for the output file name');
         }
+        defaultOutputName = argv.o;                             // assign the file output name/location to the passed arg somce it is valid
     }
     if (argv.output) {
         if (typeof (argv.output) !== 'string') {
-            console.log('Error: Please provide a string for the output file name');
-            process.exit(0);
-        } else {
-            defaultOutputName = argv.output;
+            return console.log('Error: Please provide a string for the output file name');
         }
+        defaultOutputName = argv.output;
     }
     if (argv.o && argv.output) {
-        console.log('Error: Please only use -o or --output, not both!');
-        process.exit(0);
+        return console.log('Error: Please only use -o or --output, not both!');
     }
     if (argv.t) {
         if (argv.t == '.txt') {
@@ -482,15 +472,14 @@ function main() {
     if (argv.f) {
         // ensure a valid year was passed
         if (!NVDYearValidator(argv.f)) {
-            console.log(`Error: ${argv.f} is not a valid year to search by`);
-        } else {
-            return NVDCheckFull(argv.f, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
+            return console.log(`Error: ${argv.f} is not a valid year to search by`);
         }
+        return NVDCheckFull(argv.f, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
     }
     if (argv.full) {
         // ensure a valid year was passed
         if (!NVDYearValidator(argv.full)) {
-            console.log(`Error: ${argv.full} is not a valid year to search by`);
+            return console.log(`Error: ${argv.full} is not a valid year to search by`);
         } else {
             return NVDCheckFull(argv.full, defaultOutputLocation, defaultOutputFormat, defaultChecklistLoc, defaultOutputName);
         }
@@ -509,7 +498,7 @@ function main() {
         }
     }
     if (argv.v || argv.version) {
-        console.log(`nvd-cli version: ${ver}`);
+        return console.log(`nvd-cli version: ${ver}`);
     }
     // if no cammand arg is given, display the help section
     if (!argv.r && !argv.recent && !argv.f && !argv.full && !argv.s && !argv.search && !argv.v && !argv.version) {
