@@ -85,28 +85,39 @@ When providing a checklist, the .json file should look something like this:
 
 ## History
 
+
+- **0.4.7**
+    - `--search` command now actually does something (accidentally left code commented when testing)
+
+
 - **0.4.5**
     - Updated some legacy code involving checklist files that was causing issues if it was not found
     - Minor changes
 
+
 - **0.4.1**
     - Fixed the npm install issue
+
 
 - **0.4.0**
     - Added the `help <command>` functionality. There's likely typos/errors. If you find any let me know
     - Updated the `-h (--help)` information
     - Project is now up on `npm`
 
+
 - **0.3.5**
     - Added the `-t (--type)` optional flag for changing the output type
     - Changed the arg validations slightly, reducing the number of pre-run checks
 
+
 - **0.3.2**
     - Updated help info to be actually useful
+
 
 - **0.3.1**
     - `-s` now requires at least 3 characters to search by
     - fixed HUGE issue where `-s` flag wasn't actually searching the passed year
+
 
 - **0.3.0**
     - `-s` functionality has been (mostly) implimented
@@ -114,10 +125,12 @@ When providing a checklist, the .json file should look something like this:
     - Major improvment to code layout
     - Much more validation has been put in place
 
+
 - **0.2.0**
     - A new (better) argument handler is now in place
     - `-f` and `-r` args work as before if not better than before
     - `-c` and `-o` commands for setting a custom checklist and output location have been added
+
 
 - **0.1.2**
     - Added help command/arg handler.  `help <command>` not yet working
