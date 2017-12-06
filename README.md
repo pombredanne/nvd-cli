@@ -85,6 +85,9 @@ When providing a checklist, the .json file should look something like this:
 
 ## History
 
+- **0.4.9**
+    - Set PDKit to default font to avoid issues
+
 - **0.4.8**
     - Fixed checklist issue that popped up that testing didn't catch
 
