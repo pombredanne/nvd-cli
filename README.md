@@ -2,8 +2,6 @@
 
 **NOTE: This project is currently in BETA.. please stand by...**
 
-**NOTE: !!!!!!!!!!!!!!!!!Due to an issue this is not on npm, expect a fix by tomorrow**
-
 This project is designed to assist with searching the National Vulnerability Database 
 ([NVD](https://nvd.nist.gov/)) and getting vulnerability info for the products that matter to **you**
 
@@ -87,11 +85,13 @@ When providing a checklist, the .json file should look something like this:
 
 ## History
 
+- **0.4.1**
+    - Fixed the npm install issue
+
 - **0.4.0**
     - Added the `help <command>` functionality. There's likely typos/errors. If you find any let me know
     - Updated the `-h (--help)` information
     - Project is now up on `npm`
-
 
 - **0.3.5**
     - Added the `-t (--type)` optional flag for changing the output type
