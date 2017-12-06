@@ -85,6 +85,8 @@ When providing a checklist, the .json file should look something like this:
 
 ## History
 
+- **0.4.8**
+    - Fixed checklist issue that popped up that testing didn't catch
 
 - **0.4.7**
     - `--search` command now actually does something (accidentally left code commented when testing)
