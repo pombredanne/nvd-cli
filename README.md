@@ -85,6 +85,10 @@ When providing a checklist, the .json file should look something like this:
 
 ## History
 
+- **0.4.5**
+    - Updated some legacy code involving checklist files that was causing issues if it was not found
+    - Minor changes
+
 - **0.4.1**
     - Fixed the npm install issue
 
