@@ -90,7 +90,7 @@ For more help on a specific command/arg type help <command> without the '-' or '
                         default './checklist.json'
 ```
 
-**Output Type (Optional):**
+**Output Location (Optional):**
 ```
     Usage: <primary flag> -o, --output=<custom_output_dir/file_name>
                 
