@@ -137,6 +137,12 @@ When providing a checklist, the .json file should look something like this:
 
 ## History
 
+- **0.5.0**
+    - Added `--vendor` option to `-s` and `--search` primary flags
+    - Cleaned up the documentation so it made a bit more sense after some feedback
+    - Minor fixes
+
+
 - **0.4.9**
     - Set PDKit to default font to avoid issues
 
