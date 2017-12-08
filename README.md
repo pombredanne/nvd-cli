@@ -208,3 +208,5 @@ When providing a checklist, the .json file should look something like this:
 
 
 ## License
+
+See LICENSE file in the root directory
