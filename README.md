@@ -29,7 +29,7 @@ Usage: nvd-cli <primary flag> <primary flag arg> [optional flags]
 -f, --full            Conduct a full search against the default or provided 
                       checklist for a given <year> arg
 
--r, --recent          Search for vulnerabilaties in the NVD recent category using default 
+-r, --recent, recent  Search for vulnerabilaties in the NVD recent category using default 
                       or provided checklist
 
 -s, --search          Specifically search for an NVD vulnerability matching the providded 
@@ -53,6 +53,58 @@ Usage: nvd-cli <primary flag> <primary flag arg> [optional flags]
 For more help on a specific command/arg type help <command> without the '-' or '--'
 
 ```
+
+##More Info on Commands
+
+
+###Recent Check
+```
+    Usage: -r, --recent, recent, [optional parameters]
+
+    Description:        Get RECENT NVD data matching the default or provided
+                        checklist and write the report to a file
+```
+
+###Full Check
+```
+    Usage: -f, --full, <year to fully search> [optional parameters]
+    
+    Description:        Get FULL NVD data for a given year matching the 
+                        default or provided checklist and write the report to a file
+```
+
+
+###Search by Product or Vendor
+```
+    Usage: -s, --search, <year to search> --product=<product_name> OR --vendor=<vendor_name> [optional parameters]
+        
+    Description:        Get NVD data for a given year that matches the 
+                        <product_name> or <vendor_name> string
+```
+
+###Checklist Location (Optional)
+```
+    Usage: <primary flag> -c, --checklist=<checklist_file_location>
+            
+    Description:        Specify a custom checklist other than the
+                        default './checklist.json'
+```
+
+###Output Type (Optional)
+```
+    Usage: <primary flag> -o, --output=<custom_output_dir/file_name>
+                
+    Description:        Specify a report location and file name other
+                        than the default './report.pdf'
+```
+
+###Type of Output (Optional)
+```
+    Usage: <primary flag> -t, --type=<file_type_to_generate ('.txt') ('.pdf')>
+                    
+    Description:        Change the report type to be either .txt or .pdf
+```
+
 
 ## Configuring
 
