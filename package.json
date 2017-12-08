@@ -9,6 +9,7 @@
     "minimist": "^1.2.0",
     "pdfkit": "^0.8.3"
   },
+  "preferGlobal": true,
   "bin": "./lib/nvd-cli.js",
   "devDependencies": {},
   "scripts": {
