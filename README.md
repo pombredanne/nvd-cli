@@ -54,10 +54,10 @@ For more help on a specific command/arg type help <command> without the '-' or '
 
 ```
 
-##More Info on Commands
+**More Info on Commands:**
 
 
-**Recent Check**
+**Recent Check:**
 ```
     Usage: -r, --recent, recent, [optional parameters]
 
@@ -65,7 +65,7 @@ For more help on a specific command/arg type help <command> without the '-' or '
                         checklist and write the report to a file
 ```
 
-**Full Check**
+**Full Check:**
 ```
     Usage: -f, --full, <year to fully search> [optional parameters]
     
@@ -74,7 +74,7 @@ For more help on a specific command/arg type help <command> without the '-' or '
 ```
 
 
-**Search by Product or Vendor**
+**Search by Product or Vendor:**
 ```
     Usage: -s, --search, <year to search> --product=<product_name> OR --vendor=<vendor_name> [optional parameters]
         
@@ -82,7 +82,7 @@ For more help on a specific command/arg type help <command> without the '-' or '
                         <product_name> or <vendor_name> string
 ```
 
-**Checklist Location (Optional)**
+**Checklist Location (Optional):**
 ```
     Usage: <primary flag> -c, --checklist=<checklist_file_location>
             
@@ -90,7 +90,7 @@ For more help on a specific command/arg type help <command> without the '-' or '
                         default './checklist.json'
 ```
 
-**Output Type (Optional)**
+**Output Type (Optional):**
 ```
     Usage: <primary flag> -o, --output=<custom_output_dir/file_name>
                 
@@ -98,7 +98,7 @@ For more help on a specific command/arg type help <command> without the '-' or '
                         than the default './report.pdf'
 ```
 
-**Type of Output (Optional)**
+**Type of Output (Optional):**
 ```
     Usage: <primary flag> -t, --type=<file_type_to_generate ('.txt') ('.pdf')>
                     
